@@ -3,6 +3,26 @@ channels:
   - bioconda
   - defaults
 dependencies:
-  - jupyter=1.0.0
   - r-base=4.3.2
   - r-lintr=3.1.1
+  - biopython=1.81
+  - jupyter=1.0.0
+  - libxml2=2.12.5
+  - icu=73.2
+  - r-irkernel=1.3.2
+  - r-tidyverse=2.0.0
+  - r-ape=5.8
+  - r-reshape2=1.4.4
+  - r-ggnewscale=0.4.10
+  - r-ggpubr=0.6.0
+  - r-igraph=2.0.2
+  - r-uwot=0.1.16
+  - r-dbscan=1.1_12
+  - r-ggrepel=0.9.4
+  - r-phytools=2.0
+  - r-rcpp=1.0.12
+  - r-rcpparmadillo=0.12.6.4.0
+  - r-logistf=1.26.0
+  - bioconductor-ggtree=3.10
+  - pip=23.2.1
+  - python=3.12.0
