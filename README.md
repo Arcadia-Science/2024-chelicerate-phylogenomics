@@ -1,34 +1,19 @@
-# TODO: Replace with the name of the repo
+# 2024-chelicerate-phylogenomics
 
 [![run with conda](http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/projects/miniconda/en/latest/)
 
-Note: Analysis repo names should be prefixed with the year (e.g., `2024-noveltree-analysis`). This prefix can be changed at time of publication if appropriate.
-
 ## Purpose
 
-TODO: Briefly describe the core analyses performed in the repository and the motivation behind them.
+We used phylogenomics to investigate patterns of gene family evolution across ticks and other chelicerates, which include a diverse array of parasites. We used phylogenetic profiling and trait-association tests to predict gene families that may enable parasitic species to feed on hosts undetected for prolonged periods (>1 day). This repository contains the scripts used to generate phylogenetic profiles for each gene family using the outputs of [NovelTree](https://doi.org/10.57844/arcadia-9602-3351), cluster families by profile similarity, and identify clusters that predict suppression of host detection.
 
 ## Installation and Setup
 
 This repository uses conda to manage software environments and installations. You can find operating system-specific instructions for installing miniconda [here](https://docs.conda.io/projects/miniconda/en/latest/). After installing conda and [mamba](https://mamba.readthedocs.io/en/latest/), run the following command to create the pipeline run environment.
 
 ```{bash}
-TODO: Replace <NAME> with the name of your environment
-mamba env create -n <NAME> --file envs/dev.yml
-conda activate <NAME>
+mamba env create -n chelicerate --file envs/dev.yml
+conda activate chelicerate
 ```
-
-<details><summary>Developer Notes (click to expand/collapse)</summary>
-
-As your project develops, the number of dependencies in your environment may increase. Whenever you install new dependencies (e.g., using `mamba install`), you should update the environment file using the following command.
-
-```{bash}
-conda env export --from-history --no-builds > envs/dev.yml
-```
-
-`--from-history` only exports packages that were explicitly added by you (e.g., the packages you installed with `mamba`) and `--no-builds` removes build specification from the exported packages to increase portability between different platforms. 
-
-</details>
 
 ## Data
 
@@ -36,18 +21,59 @@ TODO: Add details about the description of input / output data and links to Zeno
 
 ## Overview
 
-### Description of the folder structure
+*add something about how this is actually run*
+1. Conduct phylogenetic profiling to identify groups (clusters) of gene families that have very similar patterns of gene duplication, transfer, and loss (gene family evolutionary events)
+    - These results are contained within [`chelicerate-results/umap-layout-cluster-ids/*_profile_clusters_annotations.tsv`](./chelicerate-results/umap-layout-cluster-ids/)
+        - If you ever want to visualize these profile clusters, there are static plots (pdfs) of the UMAP projections of each gene family, and for each event type, with each gene family/point colored according to their (leiden) cluster ID (e.g. [`speciation_profile_umap_best_clusters.pdf`](chelicerate-results/plots/speciation_profile_umap_best_clusters.pdf))
+        - Additionally, there are interactive HTMLs where you can hover over to see the name of the gene family and corresponding annotation, as well as see the cluster assignments from the other clustering algorithms used (e.g. [`speciation_profile_umap_clustering.html`](chelicerate-results/plots/speciation_profile_umap_clustering.html)
+2. Within those groups/profile clusters, ask whether the mean counts of each event type (excluding duplication, as these events are occur deeper in the tree) is associated with suppression of host detection (i.e. a logistic regression, asking whether suppression of host detection, a binary trait, is predicted by the mean count of each event type).
+    - These results are contained within [`chelicerate-results/detection_suppression_results/*_profile_cluster_detection_suppression_associations.tsv`](./chelicerate-results/detection_suppression_results/)
+    - The pdfs (e.g. [`loss_profile_cluster_detection_suppression_associations.pdf`](chelicerate-results/detection_suppression_results/loss_profile_cluster_detection_suppression_associations.pdf) are plots of these results, where the Y-axis is the fitted coefficient of the logistic regression (here, log-odds, since we’re doing logistic regression), and each point is a profile cluster (i.e. cluster of gene families)
+    - These are ordered by their coefficient, and the most significantly associated clusters are labeled according to their cluster ID (for that specific event type)
+3. Then, for those profile clusters that have significant associations between suppression of host detection and counts of each event type, conduct a similar association test, this time within each profile cluster
+    - Here, we ask (for each gene family) if the counts of each event type observed in each species predict whether they suppress detection by the host (again, a logistic regression).
+    - These results are contained within [`chelicerate-results/detection_suppression_results/combined_profile_clusters`](./chelicerate-results/detection_suppression_results/combined_profile_clusters/)
+        - The subdirectories `loss_associations`, `speciation_associations`, and `transfer_associations` contain the association test results using each respective event type, and the tables/plots are interpreted the same as for the profile cluster association test results
+    - The key difference between this step and the association tests done in `1.` is that now the unit being tested is the specific gene family - the annotations for which can be obtained from [`umap-layout-cluster-ids/*_profile_clusters_annotations.tsv`](./umap-layout-cluster-ids/)
+    - One key note: the per-family functional annotations in these `*annotations.tsv` files do not differ, but the different cluster IDs will.
+        - Because the statistical tests were conducted on each individual event type, you’d actually need to look at the corresponding table to pull out those IDs (e.g. [`speciation_profile_clusters_annotations.tsv`](./umap-layout-cluster-ids/speciation_profile_clusters_annotations.tsv))
+    - Regardless, for now it's best to focus on the `leiden_cluster_id`, since these are the clusters the statistical tests were conducted on.
 
-### Methods
+#### A few quick notes on interpretation:
+1. "Speciations" in the context of gene family evolution captures multiple features of gene family evolution and is closely ties to gene copy number - it thus is a correlate of the other event types - gene duplication, transfer, and loss.
+    - For instance, increasing gene duplication increases the observed number of speciation events, whereas elevated rates of gene loss will decrease the number of speciation events.
+    - For these reasons, it is very information rich and variable among species, making it particularly suitable for these statistical analyses of trait association.
+    - Thus, if you were to choose one event type to focus on, it's recommended you focus on speciations.
+2. It's crucially important that you interpret estimated coefficients in the context of the underlying biology for each event type.
+    - For instance, a positive association between gene losses and host detection suppression means that these gene families likely _prevent_ or _limit_ the capacity of species (in some way) to suppress detection by the host.
+        - A reasonable hypothesis here would be that it was selectively beneficial for those genes to be lost in species that suppress host detection.
+        - Instead, the gene families that exhibit a negative association between gene losses and suppression of host detection would be hypothesized to be important for suppression of host detection, as it may be selectively advantageous for them to be retained in these species.
+    - This is in contrast to the count of speciations, which again is a strong correlate of gene copy number.
+        - Here, a positive association between speciation count and suppression of host detection would suggest that having a greater number of or diversity in these genes contributes to the capacity of species to suppress host detection.
 
-TODO: Include a brief, step-wise overview of analyses performed.
+### Analysis of Clusters of Orthogroups Positively Associated with Suppression of Host Detection
+We next sought to narrow down our pool of orthogroups to families of putative salivary effector proteins that could be direct mediators of the suppression of host detection. Gathering the different files together and filtering for these orthogroups is performed in the script `scripts/clusters-orthogroups-analysis.R`. First the identified clusters of orthogroups are combined with orthgroup information for what proteins are in that orthogroup, and the annotations of those proteins. From combining this information, tables were created of both annotation descriptions for each protein and counts of orthogroups for each species. Then orthogroups were filtered based on:
+1. Selecting top 10% correlated clusters of orthogroups under the speciation model and are positively and significantly associated with suppression of host detection. Then within these clusters, removing any orthogroup that was individually negatively associated with suppression of host detection, and also any orthogroup with an initial p value > 0.05.
 
-> Example:
->
-> 1. Download scripts using `download.sh`.
-> 2. Preprocess using `./preprocessing.sh -a data/`
-> 3. Run analysis script using `analysis.Rscript`
-> 4. Generate figures using `pub/make_figures.R`.
+    Proteins meeting this criteria were generated with:
+    ```
+    python3 scripts/grab_proteins_from_locus_tags.py \
+    proteins/2024-06-24-all-chelicerate-noveltree-proteins.fasta \
+    chelicerate-results/clusters-orthogroups-analysis/2024-06-26-top-positive-significant-clusters-orthogroups-locus-tags.txt \
+    proteins/2024-06-26-top-positive-significant-clusters-orthogroups-proteins.fasta
+    ```
+
+    Orthogroups/proteins at this level of filtering included 78 orthogroups and 3534 proteins, which are described in [`chelicerate-results/clusters-orthogroups-analysis/2024-06-26-top-positive-significant-clusters-orthogroups-annotations.tsv`](./chelicerate-results/clusters-orthogroups-analysis/2024-06-26-top-positive-significant-clusters-orthogroups-annotations.tsv).
+
+    It is important to note that after FDR testing that no individual orthogroup was individually significantly associated with suppression of host detection. From the orthogroups that remained, we performed additional filtering as follows below.
+
+2. Filtering for orthogroups where at least 50% of the proteins in that orthogroup were predicted to contain signal peptides by DeepSig. After this filter we had 14 orthogroups remaining.
+3. Requiring that the orthogroup contain an Amblyomma representative, and at least 25% of the Amblyomma genes in that orthogroup were counted as "expressed" in the IsoSeq salivary transcriptome (presence/absence, where presence counts as "expressed"). After this filter we had 12 orthogroups remaining.
+4. Orthogroup must have at least 10 total counts across 6 or more tick species. After this filter we had 10 orthogroups remaining.
+5. Removed orthogroups with proteins predicted to have transmembrane domain predictions with the [deepTMHMM webserver](https://dtu.biolib.com/DeepTMHMM). We ran the concatenated set of proteins in the webserver since the command-line program has license restrictions for commercial entities. We kept proteins designated as only signal peptide (SP), meaning we removed proteins that had predicted transmembranes (TM) along with those designated as transmembrane and signal peptide (SP + TM). From the remaining 10 orthogroups, all proteins in all orthogroups only had deepTHMM predictions with `SP`.
+
+This left us with 10 orthogroups and a total of 275 proteins, which are described in [`chelicerate-results/clusters-orthogroups-analysis/2024-06-26-final-filtered-SP-orthogroups-annotations.tsv`](./chelicerate-results/clusters-orthogroups-analysis/2024-06-26-final-filtered-SP-orthogroups-annotations.tsv).
+
 
 ### Compute Specifications
 
@@ -56,17 +82,3 @@ TODO: Describe what compute resources were used to develop and run the analysis.
 ## Contributing
 
 See how we recognize [feedback and contributions to our code](https://github.com/Arcadia-Science/arcadia-software-handbook/blob/main/guides-and-standards/guide-credit-for-contributions.md).
-
----
-## For Developers
-
-This section contains information for developers who are working off of this template. Please adjust or edit this section as appropriate when you're ready to share your repo.
-
-### GitHub templates
-This template uses GitHub templates to provide checklists when making new pull requests. These templates are stored in the [.github/](./.github/) directory.
-
-### `.gitignore`
-This template uses a `.gitignore` file to prevent certain files from being committed to the repository.
-
-### Linting
-This template automates linting using GitHub Actions and the [`lintr` linter](https://cran.r-project.org/web/packages/lintr/vignettes/lintr.html). When you push changes to your repository, GitHub will automatically run the linter and report any errors, blocking merges until they are resolved. 
