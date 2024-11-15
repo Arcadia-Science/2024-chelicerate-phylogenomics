@@ -58,12 +58,12 @@ We next sought to narrow down our pool of orthogroups to families of putative sa
     Proteins meeting this criteria were generated with:
     ```
     python3 scripts/grab_proteins_from_locus_tags.py \
-    proteins/2024-06-24-all-chelicerate-noveltree-proteins.fasta \
-    chelicerate-results/clusters-orthogroups-analysis/2024-06-26-top-positive-significant-clusters-orthogroups-locus-tags.txt \
+    2024-06-24-all-chelicerate-noveltree-proteins.fasta \
+    chelicerate-results/clusters-orthogroups-analysis/top-positive-significant-clusters-orthogroups-locus-tags.txt \
     proteins/2024-06-26-top-positive-significant-clusters-orthogroups-proteins.fasta
     ```
 
-    Orthogroups/proteins at this level of filtering included 78 orthogroups and 3534 proteins, which are described in [`chelicerate-results/clusters-orthogroups-analysis/2024-06-26-top-positive-significant-clusters-orthogroups-annotations.tsv`](./chelicerate-results/clusters-orthogroups-analysis/2024-06-26-top-positive-significant-clusters-orthogroups-annotations.tsv).
+    Orthogroups/proteins at this level of filtering included 78 orthogroups and 3534 proteins, which are described in [`chelicerate-results/clusters-orthogroups-analysis/top-positive-significant-clusters-orthogroups-annotations.tsv`](./chelicerate-results/clusters-orthogroups-analysis/top-positive-significant-clusters-orthogroups-annotations.tsv).
 
     It is important to note that after FDR testing that no individual orthogroup was individually significantly associated with suppression of host detection. From the orthogroups that remained, we performed additional filtering as follows below.
 
@@ -72,12 +72,7 @@ We next sought to narrow down our pool of orthogroups to families of putative sa
 4. Orthogroup must have at least 10 total counts across 6 or more tick species. After this filter we had 10 orthogroups remaining.
 5. Removed orthogroups with proteins predicted to have transmembrane domain predictions with the [deepTMHMM webserver](https://dtu.biolib.com/DeepTMHMM). We ran the concatenated set of proteins in the webserver since the command-line program has license restrictions for commercial entities. We kept proteins designated as only signal peptide (SP), meaning we removed proteins that had predicted transmembranes (TM) along with those designated as transmembrane and signal peptide (SP + TM). From the remaining 10 orthogroups, all proteins in all orthogroups only had deepTHMM predictions with `SP`.
 
-This left us with 10 orthogroups and a total of 275 proteins, which are described in [`chelicerate-results/clusters-orthogroups-analysis/2024-06-26-final-filtered-SP-orthogroups-annotations.tsv`](./chelicerate-results/clusters-orthogroups-analysis/2024-06-26-final-filtered-SP-orthogroups-annotations.tsv).
-
-
-### Compute Specifications
-
-TODO: Describe what compute resources were used to develop and run the analysis. For example, you could list the operating system, number of cores, RAM, and storage space. You should log any major changes to the compute specifications here as they happen.
+This left us with 10 orthogroups and a total of 275 proteins, which are described in [`chelicerate-results/clusters-orthogroups-analysis/final-filtered-SP-orthogroups-annotations.tsv`](./chelicerate-results/clusters-orthogroups-analysis/final-filtered-SP-orthogroups-annotations.tsv).
 
 ## Contributing
 
