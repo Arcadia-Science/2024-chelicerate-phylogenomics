@@ -6,7 +6,7 @@ library(tidyverse)
 
 # load in orthogroups TSV
 # links for each orthogroup the locus tag of protein belonging in that orthogroup
-# downloaded from NovelTree results available on Zenodo
+# downloaded NovelTree results- available on Zenodo
 # resulting orthogroups file from NovelTree analysis
 
 orthogroups <-
@@ -480,7 +480,7 @@ write.table(
 # final locus tag list
 write.table(
   all_locus_tags,
-  "metadata/final-filtered-itch-association-SP-protein-locus-tags.txt",
+  "metadata/final-filtered-host-detection-association-SP-protein-locus-tags.txt",
   row.names = FALSE,
   sep = "\t",
   quote = FALSE,
