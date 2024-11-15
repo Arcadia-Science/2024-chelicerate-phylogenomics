@@ -1,0 +1,21 @@
+{
+	"tree_method": "iqtree",
+	"msa_trimmer": "none",
+	"rooted_spp_tree": "none",
+	"min_num_seq_per_og": 5,
+	"min_num_grp_per_og": 1,
+	"aligner": "witch",
+	"max_cpus": 2500,
+	"max_memory": "5000.GB",
+	"download_annots": "all",
+	"max_copy_num_gene_trees": 20,
+	"max_time": "3000.h",
+	"min_prop_spp_for_spptree": 0.75,
+	"mcl_inflation": "1.25,1.5,1.75,2.0,2.25,2.5,2.75,3.0,3.25,3.5,3.75,4.0,4.25,4.5",
+	"tree_model_pmsf": "none",
+	"outdir": "s3://organism-selection-engines/noveltree/chelicerata-v1/chelicerata-v1-10062023/",
+	"input": "s3://organism-selection-engines/noveltree/chelicerata-v1/run-configurations/chelicerata-v1-samplesheet.csv",
+	"min_num_spp_per_og": 5,
+	"min_ungapped_length": 20,
+	"max_copy_num_spp_tree": 10
+}
