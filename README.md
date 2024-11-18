@@ -14,6 +14,11 @@ This repository uses conda to manage software environments and installations. Yo
 mamba env create -n chelicerate --file envs/dev.yml
 conda activate chelicerate
 ```
+This repository contains R scripts which can be run in Rstudio, which can be installed following the instructions [here](https://posit.co/download/rstudio-desktop/). Once Rstudio is installed, run the following from command line to open Rstudio from your activated conda environment:
+
+```{bash}
+open -a Rstudio
+```
 
 ## Data
 
@@ -21,7 +26,7 @@ Some of the data needed to run these scripts is too large for GitHub and has bee
 - Outputs of the NovelTree run that are used as input into [phylo_profiling_genefam_evol_counts.R](scripts/phylo_profiling_genefam_evol_counts.R): chelicerata-v1-10062023.zip
 - Chelicerate gene annotations used to do orthogroup filtering in [clusters_orthogroups-analysis.R](scripts/clusters_orthogroups-analysis.R): annotated.zip 
 - Presence/absence of expression for each transcript in *A. americanum* salivary transcriptome used in [clusters_orthogroups-analysis.R](scripts/clusters_orthogroups-analysis.R): tx2gene.tsv
-- Chelicerate protein sequences used as input for [clusters_orthogroups-analysis.R](scripts/clusters_orthogroups-analysis.R)/needed for [deepTMHMM webserver](https://dtu.biolib.com/DeepTMHMM) prediction: 2024-06-24-all-chelicerate-noveltree-proteins.fasta
+- Chelicerate protein sequences used as input in [clusters_orthogroups-analysis.R](scripts/clusters_orthogroups-analysis.R) and needed for [deepTMHMM webserver](https://dtu.biolib.com/DeepTMHMM) prediction: 2024-06-24-all-chelicerate-noveltree-proteins.fasta
 
 ## Overview
 
