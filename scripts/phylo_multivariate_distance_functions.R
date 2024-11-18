@@ -69,7 +69,7 @@ phylo_gls_transform <-
     # Obtain the phylogenetic VCV for both species and internal nodes:
     phylo_vcv <- vcvPhylo(tree, anc.nodes = include_internal)
 
-    if (include_internal == T) {
+    if (include_internal == TRUE) {
       colnames(phylo_vcv) <- c(tree$tip.label, tree$node.label[-1])
       rownames(phylo_vcv) <- c(tree$tip.label, tree$node.label[-1])
 
@@ -97,7 +97,7 @@ phylo_gls_transform <-
       }
       transf_data <- do.call(cbind, transf_data)
     } else {
-      if (include_internal == T) {
+      if (include_internal == TRUE) {
         # Remove the root node from the data:
         data <- data[, -which(colnames(data) == root_node_name)]
         # Ensure the data matches the order of the species tree

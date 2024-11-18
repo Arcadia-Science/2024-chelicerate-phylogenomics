@@ -154,7 +154,6 @@ amblyomma_signf_clusters_orthogroups <-
 # write out main files
 # only writing out files for the filtered down sets of orthogroups/proteins that are within the top 10% clusters, are positively and significantly associated with host detection suppression under the speciation model
 # annotation table
-# Define the file path
 output_path <- "chelicerate-results/clusters-orthogroups-analysis"
 
 # Create the directory if it doesn't exist

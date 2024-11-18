@@ -92,8 +92,8 @@ cluster_assoc_test <-
           wilcox.test(
             suppressor_mean[cl_ids],
             nonsuppressor_mean[cl_ids],
-            exact = F,
-            conf.int = T
+            exact = FALSE,
+            conf.int = TRUE
           )
         ps[i] <- test_res$p.value
         coef[i] <- test_res$estimate[[1]]
@@ -196,9 +196,9 @@ plot_cluster_traitcorr <-
     sig_clusts <-
       res[res$pval <= 0.05, ]
     label_neg <-
-      which(sig_clusts$coefficient <= 0)[order(sig_clusts$coefficient[sig_clusts$coefficient <= 0], decreasing = F)][1:10]
+      which(sig_clusts$coefficient <= 0)[order(sig_clusts$coefficient[sig_clusts$coefficient <= 0], decreasing = FALSE)][1:10]
     label_pos <-
-      which(sig_clusts$coefficient >= 0)[order(sig_clusts$coefficient[sig_clusts$coefficient >= 0], decreasing = T)][1:10]
+      which(sig_clusts$coefficient >= 0)[order(sig_clusts$coefficient[sig_clusts$coefficient >= 0], decreasing = TRUE)][1:10]
     to_label <- na.omit(c(label_neg, label_pos))
     if (length(to_label) > 0) {
       sig_clusts <- sig_clusts[to_label, ]
@@ -397,20 +397,20 @@ save_per_fam_associations <-
     if (event_type == "speciation") {
       output_dir <- paste0(output_dir, "speciation_associations/")
       dir.create(output_dir,
-        recursive = T,
-        showWarnings = F
+        recursive = TRUE,
+        showWarnings = FALSE
       )
     } else if (event_type == "transfer") {
       output_dir <- paste0(output_dir, "transfer_associations/")
       dir.create(output_dir,
-        recursive = T,
-        showWarnings = F
+        recursive = TRUE,
+        showWarnings = FALSE
       )
     } else {
       output_dir <- paste0(output_dir, "loss_associations/")
       dir.create(output_dir,
-        recursive = T,
-        showWarnings = F
+        recursive = TRUE,
+        showWarnings = FALSE
       )
     }
 
@@ -426,9 +426,9 @@ save_per_fam_associations <-
           "_per_family_correlation_results.tsv"
         ),
         sep = "\t",
-        quote = F,
-        row.names = F,
-        col.names = T
+        quote = FALSE,
+        row.names = FALSE,
+        col.names = TRUE
       )
       # Save the data (species event counts per-cluster)
       write.table(
@@ -439,9 +439,9 @@ save_per_fam_associations <-
           "_per_species_speciation_counts.tsv"
         ),
         sep = "\t",
-        quote = F,
-        row.names = F,
-        col.names = T
+        quote = FALSE,
+        row.names = FALSE,
+        col.names = TRUE
       )
       # And save the plot visualizing the per-family correlation test results
       ggsave(

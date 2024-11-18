@@ -25,8 +25,8 @@ read_busco_summary <-
       )
     busco_res <-
       read_table(busco_summary,
-        progress = F,
-        show_col_types = F
+        progress = FALSE,
+        show_col_types = FALSE
       )[, -c(3, 8)]
     busco_res[1, 1] <- gsub(".fasta", "", busco_res[1, 1])
     colnames(busco_res) <-
@@ -137,7 +137,7 @@ plot_spp_tree <-
 
     # Determine if we're plotting as a cladogram or not (e.g. forcing
     # the tree to be ultrametric, ignoring branch lengths)
-    if (cladogram == T) {
+    if (cladogram == TRUE) {
       bl <- "none"
     } else {
       bl <- "branch.length"
@@ -182,7 +182,7 @@ plot_spp_tree <-
             aes(label = label),
             size = 10,
             hjust = -.5,
-            as_ylab = T
+            as_ylab = TRUE
           ) +
           geom_tippoint(
             aes(fill = grp),
@@ -214,15 +214,15 @@ get_per_spp_og_counts <-
       list.files(
         path = paste0(results_dir, "orthofinder/complete_dataset/"),
         pattern = "Results_Inflation",
-        full.names = T
+        full.names = TRUE
       )
 
     # read in per-species gene copy number per gene family
     og_counts <-
       read.table(
         paste0(orthogroup_dir, "/Orthogroups/Orthogroups.GeneCount.tsv"),
-        header = T,
-        check.names = F
+        header = TRUE,
+        check.names = FALSE
       )
     colnames(og_counts) <- gsub("\\..*", "", colnames(og_counts))
 
@@ -233,15 +233,15 @@ get_per_spp_og_counts <-
     # Write out to file if an output directory is provided
     if (!is.null(out_dir)) {
       # Create the directory if it doesn't yet exist
-      dir.create(out_dir, showWarnings = F, recursive = T)
+      dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
       # And write out to file
       write.table(
         og_counts,
         file = paste0(out_dir, "og_copy_num_per_spp.tsv"),
         sep = "\t",
-        quote = F,
-        row.names = F,
-        col.names = T
+        quote = FALSE,
+        row.names = FALSE,
+        col.names = TRUE
       )
     }
     return(og_counts)
@@ -251,14 +251,14 @@ get_per_spp_og_counts <-
 # the results of orthofinders "comparative genomics statistics"
 get_ofinder_summaries <-
   function(results_dir = NULL,
-           show_plots = F,
+           show_plots = FALSE,
            out_dir = "summarized-results/orthofinder/") {
     # Store relevant fpaths to variables
     orthogroup_dir <-
       list.files(
         path = paste0(results_dir, "orthofinder/complete_dataset/"),
         pattern = "Results_Inflation",
-        full.names = T
+        full.names = TRUE
       )
     phylohog_dir <-
       paste0(results_dir, "orthofinder/complete_dataset/Results_HOGs/")
@@ -270,7 +270,7 @@ get_ofinder_summaries <-
           phylohog_dir,
           "/Comparative_Genomics_Statistics/OrthologuesStats_Totals.tsv"
         ),
-        check.names = F
+        check.names = FALSE
       )
 
     # read in orthogroup (gene family) pairwise species overlaps
@@ -280,7 +280,7 @@ get_ofinder_summaries <-
           orthogroup_dir,
           "/Comparative_Genomics_Statistics/Orthogroups_SpeciesOverlaps.tsv"
         ),
-        check.names = F
+        check.names = FALSE
       )
 
     # Read in overall OG stats: these will be reformatted in
@@ -289,8 +289,8 @@ get_ofinder_summaries <-
       list.files(
         orthogroup_dir,
         pattern = "Statistics_Overall.tsv",
-        recursive = T,
-        full.names = T
+        recursive = TRUE,
+        full.names = TRUE
       )
     og_gene_freqs <-
       read_tsv(
@@ -432,7 +432,7 @@ get_ofinder_summaries <-
       )
 
     # print the plots if that is requested
-    if (show_plots == T) {
+    if (show_plots == TRUE) {
       print(og_gene_hists_plts)
     }
 
@@ -471,14 +471,14 @@ get_ofinder_summaries <-
     )
 
     # And plot if requested
-    if (show_plots == T) {
+    if (show_plots == TRUE) {
       print(og_spp_hist)
     }
 
     # Write out to file if an output directory is provided
     if (!is.null(out_dir)) {
       # Create the directory if it doesn't yet exist
-      dir.create(out_dir, showWarnings = F, recursive = T)
+      dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 
       # Write out to file, both the histograms of gene count per og/genes per
       # species per orthogroup
@@ -492,9 +492,9 @@ get_ofinder_summaries <-
         og_gene_freqs,
         file = paste0(out_dir, "genes_per_spp_in_ogs_histograms.tsv"),
         sep = "\t",
-        quote = F,
-        col.names = T,
-        row.names = F
+        quote = FALSE,
+        col.names = TRUE,
+        row.names = FALSE
       )
 
       # Same for histograms of eh # of species per orthogroup.
@@ -507,9 +507,9 @@ get_ofinder_summaries <-
       write.table(
         og_spp_counts,
         file = paste0(out_dir, "num_species_in_og_hist.tsv"),
-        row.names = F,
-        col.names = T,
-        quote = F
+        row.names = FALSE,
+        col.names = TRUE,
+        quote = FALSE
       )
     }
   }
@@ -518,14 +518,14 @@ get_ofinder_summaries <-
 # species included in each gene family, and the per-species mean copy number
 summ_genefam_composition <-
   function(results_dir = NULL,
-           show_plots = F,
+           show_plots = FALSE,
            out_dir = "summarized-results/orthofinder/") {
     # Read in the gene copy number and species count for each gene family
     res <-
       read.table(
         paste0(results_dir, "filtered_orthogroups/all_ogs_counts.csv"),
         sep = ",",
-        header = T
+        header = TRUE
       )
 
     # Plot the mean species gene copy number against the number of species
@@ -558,7 +558,7 @@ summ_genefam_composition <-
       suppressMessages(plot_grid(copynum_v_numspp, fam_sppcount_dist, ncol = 2))
 
     # print the plots if that is requested
-    if (show_plots == T) {
+    if (show_plots == TRUE) {
       print(genefam_composition_plt)
     }
 
@@ -583,7 +583,7 @@ get_per_spp_ofinder_stats <-
   function(tree = NULL,
            tree_fpath = NULL,
            results_dir = NULL,
-           show_plots = T,
+           show_plots = TRUE,
            samplesheet = NULL,
            samplesheet_fpath = NULL,
            grp_name = "Group",
@@ -614,8 +614,8 @@ get_per_spp_ofinder_stats <-
       list.files(
         path = paste0(results_dir, "/orthofinder/complete_dataset/"),
         pattern = "Statistics_PerSpecies.tsv",
-        recursive = T,
-        full.names = T
+        recursive = TRUE,
+        full.names = TRUE
       )
 
     # First read in the overall stats per species and write out as a table
@@ -678,7 +678,7 @@ get_per_spp_ofinder_stats <-
       # root the tree at the parent node
       tree <-
         root(tree,
-          edgelabel = T,
+          edgelabel = TRUE,
           node = parent_edge_number,
           position = 0.25
         )
@@ -686,12 +686,12 @@ get_per_spp_ofinder_stats <-
       # Make the basic tree plot
       base_p <- suppressMessages(
         ggtree(tree, size = 0.75, branch.length = "none") %<+% taxa_tibble +
-          geom_tiplab(size = 7, as_ylab = T)
+          geom_tiplab(size = 7, as_ylab = TRUE)
       )
     } else {
       # Make the basic tree plot
       base_p <- suppressMessages(ggtree(tree, size = 0.75) %<+% taxa_tibble +
-        geom_tiplab(size = 7, as_ylab = T))
+        geom_tiplab(size = 7, as_ylab = TRUE))
     }
 
     # Now one with the tip labels
@@ -859,21 +859,21 @@ get_per_spp_ofinder_stats <-
       )
 
     # Plot out if requested
-    if (show_plots == T) {
+    if (show_plots == TRUE) {
       print(og_spp_stats_p_final)
     }
 
     # Write out to file if an output directory is provided
     if (!is.null(out_dir)) {
       # Create the directory if it doesn't yet exist
-      dir.create(out_dir, showWarnings = F, recursive = T)
+      dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
       # And write out to file c( both the tabular summary and the figure)
       write.table(
         og_stats_perspp,
         file = paste0(out_dir, "per_spp_og_stats.tsv"),
-        row.names = F,
-        col.names = T,
-        quote = F
+        row.names = FALSE,
+        col.names = TRUE,
+        quote = FALSE
       )
 
       # That was involved.... Save this to a pdf
@@ -970,7 +970,7 @@ get_og_event_rates <-
     # Read in and store those rates
     per_og_event_rates[1, ] <-
       c(gf, scan(per_og_rates_fpaths[i],
-        what = "character", quiet = T
+        what = "character", quiet = TRUE
       )[6:8])
     per_og_event_rates[1, 2:4] <-
       as.numeric(per_og_event_rates[1, 2:4])
@@ -981,7 +981,7 @@ get_og_event_rates <-
 
 get_spp_event_rates <-
   function(i, per_spp_rates_fpaths = per_spp_rates_fpaths) {
-    rates <- read.table(per_spp_rates_fpaths[i], header = F, sep = " ")
+    rates <- read.table(per_spp_rates_fpaths[i], header = FALSE, sep = " ")
 
     # Identify which gene family we're dealing with
     gf <-
@@ -1016,7 +1016,7 @@ get_og_events_per_spp <-
     tmp <-
       read.table(per_spp_og_events[i],
         row.names = 1,
-        check.names = F
+        check.names = FALSE
       )
     tmp <-
       data.frame(t(tmp[which(rownames(tmp) %in% species), ]), check.names = F)
@@ -1147,7 +1147,7 @@ get_tranfer_donor_recips <-
                 dimnames = list(NULL, non_donors),
                 data = 0
               ),
-              check.names = F
+              check.names = FALSE
             )
           donors <- cbind(donors, non_donors)
         }
@@ -1161,7 +1161,7 @@ get_tranfer_donor_recips <-
               dimnames = list(NULL, og_spps),
               data = 0
             ),
-            check.names = F
+            check.names = FALSE
           )
         per_spp_og_transfer_donor <-
           plyr::rbind.fill(per_spp_og_transfer_donor, non_donors)
@@ -1178,7 +1178,7 @@ get_tranfer_donor_recips <-
                 dimnames = list(NULL, non_recips),
                 data = 0
               ),
-              check.names = F
+              check.names = FALSE
             )
           recips <- cbind(recips, non_recips)
         }
@@ -1192,7 +1192,7 @@ get_tranfer_donor_recips <-
               dimnames = list(NULL, c("gene_family", og_spps)),
               data = c(gf, rep(0, length(og_spps)))
             ),
-            check.names = F
+            check.names = FALSE
           )
         per_spp_og_transfer_recip <-
           plyr::rbind.fill(per_spp_og_transfer_recip, non_recips)
@@ -1215,7 +1215,7 @@ get_tranfer_donor_recips <-
             dimnames = list(NULL, c("gene_family", og_spps)),
             data = c(gf, rep(0, length(og_spps)))
           ),
-          check.names = F
+          check.names = FALSE
         )
       per_spp_og_transfer_recip <-
         data.frame(
@@ -1224,7 +1224,7 @@ get_tranfer_donor_recips <-
             dimnames = list(NULL, c("gene_family", og_spps)),
             data = c(gf, rep(0, length(og_spps)))
           ),
-          check.names = F
+          check.names = FALSE
         )
     }
     return(
@@ -1248,40 +1248,40 @@ summarize_generax_per_family <-
     # Get lists of files for each sort of analysis/output from generax that we"ll be summarizing
     per_og_events <-
       list.files(
-        full.names = T,
+        full.names = TRUE,
         path = generax_dir,
         pattern = "eventCounts.txt",
-        recursive = T
+        recursive = TRUE
       )
     per_spp_og_events <-
       list.files(
-        full.names = T,
+        full.names = TRUE,
         path = generax_dir,
         pattern = "speciesEventCounts.txt",
-        recursive = T
+        recursive = TRUE
       )
     per_og_rates_fpaths <-
       list.files(
-        full.names = T,
+        full.names = TRUE,
         path = generax_dir,
         pattern = "stats.txt",
-        recursive = T
+        recursive = TRUE
       )
     per_og_rates_fpaths <-
       per_og_rates_fpaths[which(grepl("results/", per_og_rates_fpaths))]
     spp_tranf_rates_fpaths <-
       list.files(
-        full.names = T,
+        full.names = TRUE,
         path = generax_dir,
         pattern = "transfers",
-        recursive = T
+        recursive = TRUE
       )
     per_spp_coverage <-
       list.files(
-        full.names = T,
+        full.names = TRUE,
         path = generax_dir,
         pattern = "Coverage.txt",
-        recursive = T
+        recursive = TRUE
       )
 
     # Get the counts of each event type (duplications, transfers, losses, etc)
@@ -1396,30 +1396,30 @@ summarize_generax_per_family <-
     # Write each output to their own stand-alone summary table
     if (!is.null(out_dir)) {
       # Create the directory if it doesn't yet exist
-      dir.create(out_dir, showWarnings = F, recursive = T)
+      dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
       # And write out to file
       write.table(
         per_og_event_rates,
         file = paste0(out_dir, "event_rates_per_gene_family.tsv"),
         sep = "\t",
-        quote = F,
-        row.names = F,
-        col.names = T
+        quote = FALSE,
+        row.names = FALSE,
+        col.names = TRUE
       )
       write.table(
         per_og_event_res,
         file = paste0(out_dir, "event_counts_per_gene_family.tsv"),
         sep = "\t",
-        quote = F,
-        row.names = F,
-        col.names = T
+        quote = FALSE,
+        row.names = FALSE,
+        col.names = TRUE
       )
       write.table(
         transf_count_mat,
         file = paste0(out_dir, "hgt_summed_counts_recip_donor.tsv"),
         sep = "\t",
-        quote = F,
-        row.names = T,
+        quote = FALSE,
+        row.names = TRUE,
         col.names = NA
       )
       write.table(
@@ -1429,9 +1429,9 @@ summarize_generax_per_family <-
           "speciation_count_per_species_per_gene_family.tsv"
         ),
         sep = "\t",
-        quote = F,
-        row.names = F,
-        col.names = T
+        quote = FALSE,
+        row.names = FALSE,
+        col.names = TRUE
       )
       write.table(
         per_spp_og_duplication,
@@ -1440,17 +1440,17 @@ summarize_generax_per_family <-
           "duplication_count_per_species_per_gene_family.tsv"
         ),
         sep = "\t",
-        quote = F,
-        row.names = F,
-        col.names = T
+        quote = FALSE,
+        row.names = FALSE,
+        col.names = TRUE
       )
       write.table(
         per_spp_og_loss,
         file = paste0(out_dir, "loss_count_per_per_species_gene_family.tsv"),
         sep = "\t",
-        quote = F,
-        row.names = F,
-        col.names = T
+        quote = FALSE,
+        row.names = FALSE,
+        col.names = TRUE
       )
       write.table(
         transf_donors,
@@ -1459,9 +1459,9 @@ summarize_generax_per_family <-
           "transfer_donor_count_per_species_per_gene_family.tsv"
         ),
         sep = "\t",
-        quote = F,
-        row.names = F,
-        col.names = T
+        quote = FALSE,
+        row.names = FALSE,
+        col.names = TRUE
       )
       write.table(
         transf_recips,
@@ -1470,9 +1470,9 @@ summarize_generax_per_family <-
           "transfer_recipient_count_per_species_per_gene_family.tsv"
         ),
         sep = "\t",
-        quote = F,
-        row.names = F,
-        col.names = T
+        quote = FALSE,
+        row.names = FALSE,
+        col.names = TRUE
       )
     }
     return(results)
@@ -1488,38 +1488,38 @@ summarize_generax_per_species <-
     # Get lists of files for each sort of analysis/output from generax that we"ll be summarizing
     per_og_events <-
       list.files(
-        full.names = T,
+        full.names = TRUE,
         path = generax_dir,
         pattern = "eventCounts.txt",
-        recursive = T
+        recursive = TRUE
       )
     per_spp_og_events <-
       list.files(
-        full.names = T,
+        full.names = TRUE,
         path = generax_dir,
         pattern = "speciesEventCounts.txt",
-        recursive = T
+        recursive = TRUE
       )
     per_spp_rates_fpaths <-
       list.files(
-        full.names = T,
+        full.names = TRUE,
         path = generax_dir,
         pattern = "per_species_rates.txt",
-        recursive = T
+        recursive = TRUE
       )
     spp_tranfers_fpaths <-
       list.files(
-        full.names = T,
+        full.names = TRUE,
         path = generax_dir,
         pattern = "_transfers.txt",
-        recursive = T
+        recursive = TRUE
       )
     per_spp_coverage <-
       list.files(
-        full.names = T,
+        full.names = TRUE,
         path = generax_dir,
         pattern = "Coverage.txt",
-        recursive = T
+        recursive = TRUE
       )
 
     # Get the counts of each event type (duplications, transfers, losses, etc)
@@ -1634,30 +1634,30 @@ summarize_generax_per_species <-
     # Write each output to their own stand-alone summary table
     if (!is.null(out_dir)) {
       # Create the directory if it doesn't yet exist
-      dir.create(out_dir, showWarnings = F, recursive = T)
+      dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
       # And write out to file
       write.table(
         per_spp_event_rates,
         file = paste0(out_dir, "species_event_rates_per_gene_family.tsv"),
         sep = "\t",
-        quote = F,
-        row.names = F,
-        col.names = T
+        quote = FALSE,
+        row.names = FALSE,
+        col.names = TRUE
       )
       write.table(
         per_og_event_res,
         file = paste0(out_dir, "species_event_counts_per_gene_family.tsv"),
         sep = "\t",
-        quote = F,
-        row.names = F,
-        col.names = T
+        quote = FALSE,
+        row.names = FALSE,
+        col.names = TRUE
       )
       write.table(
         transf_count_mat,
         file = paste0(out_dir, "hgt_summed_counts_recip_donor.tsv"),
         sep = "\t",
-        quote = F,
-        row.names = T,
+        quote = FALSE,
+        row.names = TRUE,
         col.names = NA
       )
       write.table(
@@ -1667,9 +1667,9 @@ summarize_generax_per_species <-
           "speciation_count_per_species_per_gene_family.tsv"
         ),
         sep = "\t",
-        quote = F,
-        row.names = F,
-        col.names = T
+        quote = FALSE,
+        row.names = FALSE,
+        col.names = TRUE
       )
       write.table(
         per_spp_og_duplication,
@@ -1678,17 +1678,17 @@ summarize_generax_per_species <-
           "duplication_count_per_species_per_gene_family.tsv"
         ),
         sep = "\t",
-        quote = F,
-        row.names = F,
-        col.names = T
+        quote = FALSE,
+        row.names = FALSE,
+        col.names = TRUE
       )
       write.table(
         per_spp_og_loss,
         file = paste0(out_dir, "loss_count_per_per_species_gene_family.tsv"),
         sep = "\t",
-        quote = F,
-        row.names = F,
-        col.names = T
+        quote = FALSE,
+        row.names = FALSE,
+        col.names = TRUE
       )
       write.table(
         transf_donors,
@@ -1697,9 +1697,9 @@ summarize_generax_per_species <-
           "transfer_donor_count_per_species_per_gene_family.tsv"
         ),
         sep = "\t",
-        quote = F,
-        row.names = F,
-        col.names = T
+        quote = FALSE,
+        row.names = FALSE,
+        col.names = TRUE
       )
       write.table(
         transf_recips,
@@ -1708,9 +1708,9 @@ summarize_generax_per_species <-
           "transfer_recipient_count_per_species_per_gene_family.tsv"
         ),
         sep = "\t",
-        quote = F,
-        row.names = F,
-        col.names = T
+        quote = FALSE,
+        row.names = FALSE,
+        col.names = TRUE
       )
     }
     return(results)
@@ -1756,7 +1756,7 @@ update_node_names <- function(species_rates = NULL,
 plot_rates_per_spp <-
   function(tree = NULL,
            species_rates = NULL,
-           align_tips = T,
+           align_tips = TRUE,
            tip_offset = 0.1,
            rate_cols = list(arcadia_dahlias, arcadia_pansies, arcadia_poppies)) {
     # Combine the DTL rates with the species tree for plotting.

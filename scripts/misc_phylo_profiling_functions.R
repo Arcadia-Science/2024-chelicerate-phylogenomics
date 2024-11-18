@@ -1,4 +1,3 @@
-# Load the necessary libraries
 require(grDevices)
 require(Matrix)
 

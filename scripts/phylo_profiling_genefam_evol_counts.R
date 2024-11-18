@@ -248,34 +248,34 @@ htmlwidgets::saveWidget(
 write.table(
   s_dists_clusts$phylo_corrected_data,
   file = "chelicerate-results/phylo-transformed-profiles/speciation_phylo_gls_transformed_profiles.tsv",
-  quote = F,
+  quote = FALSE,
   sep = ",",
-  col.names = T,
-  row.names = T
+  col.names = TRUE,
+  row.names = TRUE
 )
 write.table(
   d_dists_clusts$phylo_corrected_data,
   file = "chelicerate-results/phylo-transformed-profiles/duplication_phylo_gls_transformed_profiles.tsv",
-  quote = F,
+  quote = FALSE,
   sep = ",",
-  col.names = T,
-  row.names = T
+  col.names = TRUE,
+  row.names = TRUE
 )
 write.table(
   sl_dists_clusts$phylo_corrected_data,
   file = "chelicerate-results/phylo-transformed-profiles/loss_phylo_gls_transformed_profiles.tsv",
-  quote = F,
+  quote = FALSE,
   sep = ",",
-  col.names = T,
-  row.names = T
+  col.names = TRUE,
+  row.names = TRUE
 )
 write.table(
   t_dists_clusts$phylo_corrected_data,
   file = "chelicerate-results/phylo-transformed-profiles/transfer_phylo_gls_transformed_profiles.tsv",
-  quote = F,
+  quote = FALSE,
   sep = ",",
-  col.names = T,
-  row.names = T
+  col.names = TRUE,
+  row.names = TRUE
 )
 
 # And lastly, save out to file the umap layout that includes cluster IDs as well as protein annotations.
@@ -293,42 +293,42 @@ all_dists_clusts$umap_clusters <-
 write.table(
   s_dists_clusts$umap_clusters,
   file = "chelicerate-results/umap-layout-cluster-ids/speciation_profile_clusters_annotations.tsv",
-  quote = F,
+  quote = FALSE,
   sep = ",",
-  col.names = T,
-  row.names = T
+  col.names = TRUE,
+  row.names = TRUE
 )
 write.table(
   d_dists_clusts$umap_clusters,
   file = "chelicerate-results/umap-layout-cluster-ids/duplication_profile_clusters_annotations.tsv",
-  quote = F,
+  quote = FALSE,
   sep = ",",
-  col.names = T,
-  row.names = T
+  col.names = TRUE,
+  row.names = TRUE
 )
 write.table(
   sl_dists_clusts$umap_clusters,
   file = "chelicerate-results/umap-layout-cluster-ids/loss_profile_clusters_annotations.tsv",
-  quote = F,
+  quote = FALSE,
   sep = ",",
-  col.names = T,
-  row.names = T
+  col.names = TRUE,
+  row.names = TRUE
 )
 write.table(
   t_dists_clusts$umap_clusters,
   file = "chelicerate-results/umap-layout-cluster-ids/transfer_profile_clusters_annotations.tsv",
-  quote = F,
+  quote = FALSE,
   sep = ",",
-  col.names = T,
-  row.names = T
+  col.names = TRUE,
+  row.names = TRUE
 )
 write.table(
   all_dists_clusts$umap_clusters,
   file = "chelicerate-results/umap-layout-cluster-ids/combined_profile_clusters_annotations.tsv",
-  quote = F,
+  quote = FALSE,
   sep = ",",
-  col.names = T,
-  row.names = T
+  col.names = TRUE,
+  row.names = TRUE
 )
 
 
@@ -358,19 +358,19 @@ l_dat <- sl_counts[, terminal]
 
 s_dat <-
   as.data.frame(t(do.call(cbind, phylo_correction(
-    t(s_dat), vcvPhylo(spptree, anc.nodes = F)
+    t(s_dat), vcvPhylo(spptree, anc.nodes = FALSE)
   ))))
 d_dat <-
   as.data.frame(t(do.call(cbind, phylo_correction(
-    t(d_dat), vcvPhylo(spptree, anc.nodes = F)
+    t(d_dat), vcvPhylo(spptree, anc.nodes = FALSE)
   ))))
 t_dat <-
   as.data.frame(t(do.call(cbind, phylo_correction(
-    t(t_dat), vcvPhylo(spptree, anc.nodes = F)
+    t(t_dat), vcvPhylo(spptree, anc.nodes = FALSE)
   ))))
 l_dat <-
   as.data.frame(t(do.call(cbind, phylo_correction(
-    t(l_dat), vcvPhylo(spptree, anc.nodes = F)
+    t(l_dat), vcvPhylo(spptree, anc.nodes = FALSE)
   ))))
 
 dimnames(s_dat) <-
@@ -505,14 +505,14 @@ final_clust_associations <-
 # plots, and one that combined the four into separate panels
 dir.create(
   "./chelicerate-results/host_detection_suppression_association_results/",
-  showWarnings = F
+  showWarnings = FALSE
 )
 write.table(
   final_clust_associations,
   sep = "\t",
-  quote = F,
-  row.names = F,
-  col.names = T,
+  quote = FALSE,
+  row.names = FALSE,
+  col.names = TRUE,
   file = "chelicerate-results/host_detection_suppression_association_results/combined_profile_cluster_host_detection_suppression_associations.tsv"
 )
 

@@ -1,9 +1,7 @@
-# Load required packages and source custom functions used herein.
 require(igraph)
 require(uwot)
 require(dbscan)
 require(ggrepel)
-
 source("./scripts/phylo_multivariate_distance_functions.R")
 source("./scripts/misc_phylo_profiling_functions.R")
 
@@ -136,7 +134,7 @@ run_phylo_profiling <-
       # Construct the igraph network from the adjacency matrix we contructed
       # using the user-specified value of K
       g <-
-        igraph::graph_from_adjacency_matrix(knn_adj_matrix, weighted = T, mode = "undirected")
+        igraph::graph_from_adjacency_matrix(knn_adj_matrix, weighted = TRUE, mode = "undirected")
 
       # Now, if clustering was requested while calling the function, go ahead
       # and run the algorithm(s)
