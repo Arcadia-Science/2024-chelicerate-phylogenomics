@@ -19,7 +19,7 @@ cluster_assoc_test <-
     cluster_ids <- cluster_res$umap_clusters
     count_dat <-
       count_dat[which(rownames(count_dat) %in% rownames(cluster_ids)), ]
-    
+
     # Calculate means
     suppressor_mean <-
       apply(count_dat[, which(colnames(count_dat) %in%
@@ -28,7 +28,7 @@ cluster_assoc_test <-
       apply(count_dat[, which(colnames(count_dat) %in%
                                 nonsuppressors)], 1, mean)
     clusters <- cluster_ids$leiden_cluster_id
-    
+
     ps <- c()
     coef <- c()
     clust_freqs <- table(clusters)
@@ -48,7 +48,7 @@ cluster_assoc_test <-
               rep(0, length(cl_ids))
             )
           )
-        
+
         fit <- lm(count ~ detection_suppression, data = dat)
         ps[idx] <- summary(fit)$coefficients[8]
         coef[idx] <- summary(fit)$coefficients[2]
@@ -164,7 +164,7 @@ plot_cluster_traitcorr <-
     extremes10 <- c(extremes10_neg, extremes10_pos)
     extremes <- c(extremes_neg, extremes_pos)
     pval_breaks <- c(0, 0.01, 0.05)
-    
+
     # Add a column indicating the significance level
     res$signif_level <- "No"
     res[which(res$pval <= 0.05), "signif_level"] <- "Yes"
@@ -172,23 +172,23 @@ plot_cluster_traitcorr <-
       res$pval <= 0.05 &
         res$coefficient <= extremes10[1] |
         res$pval <= 0.05 &
-        res$coefficient >= extremes10[2]
+          res$coefficient >= extremes10[2]
     ), "signif_level"] <- "Yes & Top 10% Coef."
     res[which(
       res$pval <= 0.05 &
         res$coefficient <= extremes[1] |
         res$pval <= 0.05 &
-        res$coefficient >= extremes[2]
+          res$coefficient >= extremes[2]
     ), "signif_level"] <- "Yes & Top 5% Coef."
     res$signif_level <-
       factor(res$signif_level,
-             levels = c("No", "Yes", "Yes & Top 10% Coef.", "Yes & Top 5% Coef.")
+        levels = c("No", "Yes", "Yes & Top 10% Coef.", "Yes & Top 5% Coef.")
       )
     res$signif_fdr <- "No"
     res$signif_fdr[which(res$qval <= 0.05)] <- "Yes"
     res$signif_fdr <-
       factor(res$signif_fdr, levels = c("No", "Yes"))
-    
+
     # Label the clusters with the ten most extreme positive and negative
     # coeffients
     sig_clusts <-
@@ -201,7 +201,7 @@ plot_cluster_traitcorr <-
     if (length(to_label) > 0) {
       sig_clusts <- sig_clusts[to_label, ]
     }
-    
+
     # Now plot, highlighting those
     plt <- suppressWarnings(
       ggplot(
@@ -277,7 +277,7 @@ plot_cluster_traitcorr <-
         ylab(ylab_string) +
         theme(legend.position = "top")
     )
-    
+
     # Finally, remove the first column which was just used for plotting
     res <- res[, -1]
     if (data_type == "gene_families") {
@@ -312,7 +312,7 @@ test_fam_corrs_per_clust <-
         rownames(phylo_profiling_res$umap_clusters)[which(phylo_profiling_res$umap_clusters$leiden_cluster_id == clstr)]
       clstr_dat <-
         count_dat[which(rownames(count_dat) %in% clust_ogs), ]
-      
+
       # Reformat and add the trait:
       clstr_dat <- as.data.frame(t(clstr_dat))
       # If there are any columns where the predictor is invariant (i.e. all 0), remove
@@ -323,13 +323,13 @@ test_fam_corrs_per_clust <-
       clstr_dat$detection_suppression <- 0
       clstr_dat$detection_suppression[which(rownames(clstr_dat) %in% suppressors)] <-
         1
-      
+
       # Now, fit phylogenetic logistic regressions for each gene family, testing whether
       # they are significant predictors
       # Prepare the data:
       clstr_dat <-
         clstr_dat[match(spptree$tip.label, rownames(clstr_dat)), ]
-      
+
       # Fit the models
       clust_res <-
         pbapply::pblapply(1:c(ncol(clstr_dat) - 1), function(i) {
@@ -350,7 +350,7 @@ test_fam_corrs_per_clust <-
           return(c(coefs, coef_ps))
         }, cl = detectCores())
       clust_res <- do.call(rbind, clust_res)
-      
+
       clstr_plts[[counter]] <-
         plot_cluster_traitcorr(
           pvals = clust_res[, 2],
@@ -389,26 +389,26 @@ save_per_fam_associations <-
     if (length(event_type) > 1 & !is.null(per_fam_results)) {
       event_type <- "speciation"
     }
-    
+
     # Save these results out to file. Create a sub-directory for each event type,
     # since we will be saving a number of plots and tables for each.
     if (event_type == "speciation") {
       output_dir <- paste0(output_dir, "speciation_associations/")
       dir.create(output_dir,
-                 recursive = TRUE,
-                 showWarnings = FALSE
+        recursive = TRUE,
+        showWarnings = FALSE
       )
     } else if (event_type == "transfer") {
       output_dir <- paste0(output_dir, "transfer_associations/")
       dir.create(output_dir,
-                 recursive = TRUE,
-                 showWarnings = FALSE
+        recursive = TRUE,
+        showWarnings = FALSE
       )
     } else {
       output_dir <- paste0(output_dir, "loss_associations/")
       dir.create(output_dir,
-                 recursive = TRUE,
-                 showWarnings = FALSE
+        recursive = TRUE,
+        showWarnings = FALSE
       )
     }
 

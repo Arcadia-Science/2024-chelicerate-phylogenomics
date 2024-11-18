@@ -74,7 +74,7 @@ plot_spp_tree <-
            grp_name = "Group",
            tip_grp_cols = NULL,
            outgroup = NULL,
-           cladogram = F) {
+           cladogram = FALSE) {
     if (is.null(tree)) {
       tree <- read.tree(tree_fpath)
     }
@@ -111,8 +111,10 @@ plot_spp_tree <-
         # read in the bootstrapped trees
         workflow_outdir <- gsub("([^/]*/[^/]*)$", "", tree_fpath)
         bs_trees <-
-          read.newick(paste0(workflow_outdir, 
-                             "asteroid/asteroid.bsTrees.newick"))
+          read.newick(paste0(
+            workflow_outdir,
+            "asteroid/asteroid.bsTrees.newick"
+          ))
         tree <- calc_bs_support(bs_trees, tree)
       }
       support_tibble <- tibble(
@@ -693,7 +695,7 @@ get_per_spp_ofinder_stats <-
     } else {
       # Make the basic tree plot
       base_p <- suppressMessages(ggtree(tree, size = 0.75) %<+% taxa_tibble +
-        geom_tiplab(size = 7, as_ylab = TRUE))
+                                   geom_tiplab(size = 7, as_ylab = TRUE))
     }
 
     # Now one with the tip labels
@@ -930,7 +932,7 @@ get_og_event_counts <-
       )
 
     # Read in the the orthogroup-wide (across spp) event counts
-    tmp <- read.table(per_og_events[i], sep = ":", check.names = F)
+    tmp <- read.table(per_og_events[i], sep = ":", check.names = FALSE)
     gf <- gsub("_eventCounts.txt", "", per_og_events[i]) %>%
       gsub(".*reconciliations/", "", .)
     gf_col <- data.frame(gene_family = gf)
@@ -972,7 +974,7 @@ get_og_event_rates <-
     # Read in and store those rates
     per_og_event_rates[1, ] <-
       c(gf, scan(per_og_rates_fpaths[i],
-        what = "character", quiet = TRUE
+                 what = "character", quiet = TRUE
       )[6:8])
     per_og_event_rates[1, 2:4] <-
       as.numeric(per_og_event_rates[1, 2:4])
@@ -1021,7 +1023,8 @@ get_og_events_per_spp <-
         check.names = FALSE
       )
     tmp <-
-      data.frame(t(tmp[which(rownames(tmp) %in% species), ]), check.names = F)
+      data.frame(t(tmp[which(rownames(tmp) %in% species), ]),
+                 check.names = FALSE)
 
     # Identify which gene family we"re dealing with
     gf <-
@@ -1119,23 +1122,27 @@ get_tranfer_donor_recips <-
     gf <-
       gsub(".*OG", "OG", spp_tranf_rates_fpaths[i]) %>% gsub("_transfers.txt", "", .)
     # And the species that are in this gene family
-    og_spps <- per_spp_og_counts[which(per_spp_og_counts$Orthogroup == gf), 
-                                 -c(1, (ncol(per_spp_og_counts) - 1):ncol(per_spp_og_counts))]
+    og_spps <- per_spp_og_counts[
+      which(per_spp_og_counts$Orthogroup == gf),
+      -c(1, (ncol(per_spp_og_counts) - 1):ncol(per_spp_og_counts))
+    ]
     og_spps <- colnames(og_spps[which(og_spps[1, ] > 0), ])
     # And then the table of recipient-donor events
     # But only if transfer events were inferred
     if (file.size(spp_tranf_rates_fpaths[i]) != 0L) {
-      tmp <- read.table(spp_tranf_rates_fpaths[i], check.names = F)
+      tmp <- read.table(spp_tranf_rates_fpaths[i], check.names = FALSE)
       donor_spps <- og_spps[which(og_spps %in% tmp$V1)]
       donors <- summary(as.factor(tmp$V1))
       donors <-
-        data.frame(as.list(donors[which(names(donors) %in% species)]), 
-                   check.names = F)
+        data.frame(as.list(donors[which(names(donors) %in% species)]),
+          check.names = FALSE
+        )
       recip_spps <- og_spps[which(og_spps %in% tmp$V2)]
       recips <- summary(as.factor(tmp$V2))
       recips <-
         data.frame(as.list(recips[which(names(recips) %in% species)]),
-                   check.names = F)
+          check.names = FALSE
+        )
 
       # And only if the transfer events occurred between tips
       # Make sure species included in the gene family have integer

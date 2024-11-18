@@ -21,10 +21,10 @@ spptree <- ladderize(spptree)
 # Read in the GeneRax event counts. Use the
 per_spp_og_events <-
   list.files(
-    full.names = T,
+    full.names = TRUE,
     path = generax_dir,
     pattern = "speciesEventCounts.txt",
-    recursive = T
+    recursive = TRUE
   )
 
 og_counts <- get_per_spp_og_counts(results_dir = result_directory)
@@ -33,9 +33,9 @@ og_counts <- get_per_spp_og_counts(results_dir = result_directory)
 get_og_events_per_node <-
   function(i, per_spp_og_events = per_spp_og_events, spptree) {
     # Read in table of per-species event counts for this gene family
-    tmp <- read.table(per_spp_og_events[i], check.names = F)
+    tmp <- read.table(per_spp_og_events[i], check.names = FALSE)
     colnames(tmp) <- c("node", "s", "sl", "d", "t")
-    
+
     return(tmp)
   }
 
@@ -83,11 +83,7 @@ for (i in 1:length(gf_node_events)) {
 # a single dataframe of all counts, we provide a list so that we can
 # individually conduct Cholensky transformations on each dataset to obtain
 # a "phylogenetically corrected" VCV to use in mahalanobis distance calculation
-all_counts <-
-  cbind(
-    s_counts, sl_counts,
-    d_counts, t_counts
-  )
+all_counts <- cbind(s_counts, sl_counts, d_counts, t_counts)
 
 # Read in the gene family annotations so we can include
 # them in plots
@@ -170,18 +166,18 @@ all_dists_clusts <-
 # Now, save the constituent results to their respective subdirectories. Again,
 # create these directories if you haven't already done so.
 dir.create("chelicerate-results/plots/",
-           showWarnings = F,
-           recursive = T
+  showWarnings = FALSE,
+  recursive = TRUE
 )
 dir.create(
   "chelicerate-results/phylo-transformed-profiles/",
-  showWarnings = F,
-  recursive = T
+  showWarnings = FALSE,
+  recursive = TRUE
 )
 dir.create(
   "chelicerate-results/umap-layout-cluster-ids/",
-  showWarnings = F,
-  recursive = T
+  showWarnings = FALSE,
+  recursive = TRUE
 )
 
 # First the PDFs of the UMAPs depicting the clustering of gene families based
@@ -412,26 +408,26 @@ s_res <- cluster_assoc_test(
   method = "logistic"
 )
 t_res <- cluster_assoc_test(t_dat, t_dists_clusts,
-                            suppressors, nonsuppressors,
-                            method = "logistic"
+  suppressors, nonsuppressors,
+  method = "logistic"
 )
 l_res <- cluster_assoc_test(l_dat, sl_dists_clusts,
-                            suppressors, nonsuppressors,
-                            method = "logistic"
+  suppressors, nonsuppressors,
+  method = "logistic"
 )
 
 # Now do the same, but using the clusters inferred from the full set of event types
 s_comb_res <- cluster_assoc_test(s_dat, all_dists_clusts,
-                                 suppressors, nonsuppressors,
-                                 method = "logistic"
+  suppressors, nonsuppressors,
+  method = "logistic"
 )
 t_comb_res <- cluster_assoc_test(t_dat, all_dists_clusts,
-                                 suppressors, nonsuppressors,
-                                 method = "logistic"
+  suppressors, nonsuppressors,
+  method = "logistic"
 )
 l_comb_res <- cluster_assoc_test(l_dat, all_dists_clusts,
-                                 suppressors, nonsuppressors,
-                                 method = "logistic"
+  suppressors, nonsuppressors,
+  method = "logistic"
 )
 
 # Plot the results for each event type, using the clusters inferred from the
@@ -446,19 +442,19 @@ s_corr_res <- plot_cluster_traitcorr(
 )
 t_corr_res <-
   plot_cluster_traitcorr(t_res$pvals,
-                         t_res$coefficient,
-                         "transfer",
-                         "transfer",
-                         t_res$clusters,
-                         method = "logistic"
+    t_res$coefficient,
+    "transfer",
+    "transfer",
+    t_res$clusters,
+    method = "logistic"
   )
 l_corr_res <-
   plot_cluster_traitcorr(l_res$pvals,
-                         l_res$coefficient,
-                         "loss",
-                         "loss",
-                         l_res$clusters,
-                         method = "logistic"
+    l_res$coefficient,
+    "loss",
+    "loss",
+    l_res$clusters,
+    method = "logistic"
   )
 
 # And do the same for each event type, but using the clusters inferred from
@@ -528,9 +524,9 @@ comb_cls_plt <-
   )
 
 ggsave(comb_cls_plt,
-       height = 12,
-       width = 14,
-       file = "./chelicerate-results/host_detection_suppression_association_results/combined_profile_cluster_host_detection_suppression_associations.pdf"
+  height = 12,
+  width = 14,
+  file = "./chelicerate-results/host_detection_suppression_association_results/combined_profile_cluster_host_detection_suppression_associations.pdf"
 )
 ggsave(
   s_comb_corr_res$correlation_plot,

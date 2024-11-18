@@ -237,7 +237,7 @@ run_phylo_profiling <-
 
         # And order these by performance based on modularity
         cluster_orders <-
-          order(cluster_modularity$modularity, decreasing = T)
+          order(cluster_modularity$modularity, decreasing = TRUE)
         cluster_methods <- cluster_methods[cluster_orders]
         cluster_names <- cluster_names[cluster_orders]
         cluster_ids <- cluster_ids[cluster_orders]
@@ -353,7 +353,7 @@ run_phylo_profiling <-
             arcadia_color_discrete(accent_v4, length(keep_clusts[[i]]))
 
           names(cols[[i]]) <-
-            names(keep_clusts[[i]][order(keep_clusts[[i]], decreasing = T)])
+            names(keep_clusts[[i]][order(keep_clusts[[i]], decreasing = TRUE)])
           # Get unique cluster IDs
           unique_clusters[[i]] <- names(keep_clusts[[i]])
           # Map unique cluster IDs to colors
@@ -373,7 +373,7 @@ run_phylo_profiling <-
         best_cols <-
           arcadia_color_discrete(accent_v4, length(keep_clusts))
         names(best_cols) <-
-          names(keep_clusts[order(keep_clusts, decreasing = T)])
+          names(keep_clusts[order(keep_clusts, decreasing = TRUE)])
         # Get unique cluster IDs
         unique_best_clusters <- names(keep_clusts)
         # Map unique cluster IDs to colors
@@ -389,7 +389,7 @@ run_phylo_profiling <-
           as.dist(distance_matrix),
           n_threads = detectCores(),
           local_connectivity = 5,
-          verbose = T
+          verbose = TRUE
         )
       umap_results_axes <- data.frame(umap_results[, 1:2])
 
@@ -559,7 +559,7 @@ run_phylo_profiling <-
           as.dist(distance_matrix),
           n_threads = detectCores(),
           local_connectivity = 5,
-          verbose = T
+          verbose = TRUE
         )
       umap_results_axes <- data.frame(umap_results[, 1:2])
 

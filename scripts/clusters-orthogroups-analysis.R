@@ -81,17 +81,20 @@ profile_files <-
 
 all_profiles <- map_df(profile_files, function(file_name) {
   read_tsv(file_name) %>%
-    mutate(filename = paste(basename(dirname(file_name)), 
-                            basename(file_name), 
-                            sep = "_"))
+    mutate(filename = paste(basename(dirname(file_name)),
+      basename(file_name),
+      sep = "_"
+    ))
 })
 
 # Model comes from the filename, bug where "speciation" is carried through for
 # profile_type for all files but is incorrect
 all_profiles_df <- all_profiles %>%
-  mutate(cluster = gsub("_per_family_correlation_results.tsv", 
-                        "",
-                        filename)) %>%
+  mutate(cluster = gsub(
+    "_per_family_correlation_results.tsv",
+    "",
+    filename
+  )) %>%
   mutate(model = cluster) %>%
   mutate(model = gsub("_.+$", "", model)) %>%
   mutate(cluster = gsub("^.*?_.*?_", "", cluster)) %>%
@@ -123,7 +126,7 @@ final_clust_associations <- read.table(
 # Filter based on signif_level and positive coefficient
 cluster_list <- final_clust_associations %>%
   filter(signif_level %in% c("Yes & Top 10% Coef.", "Yes & Top 5% Coef.") &
-    coefficient > 0)
+           coefficient > 0)
 
 speciation_select_clusters <- all_profiles_df %>%
   filter(cluster %in% paste0("cluster_", cluster_list$cluster_id)) %>%
@@ -417,7 +420,7 @@ write.table(
 # The next 3 steps were done outside of this R script:
 # Set of concatenated proteins from all chelicerate species pulled from those
 # that were directly input to the NovelTree run
-# 1. pulled out protein seqs with this command/script: 
+# 1. pulled out protein seqs with this command/script:
 # python3 ./scripts/grab_proteins_from_locus_tags.py \
 #   2024-06-24-all-chelicerate-noveltree-proteins.fasta \
 #   ./metadata/filtered-host-detection-association-protein-locus-tags-for-tm-prediction.txt
