@@ -1,11 +1,8 @@
-<!--
 
 Many thanks for contributing to Arcadia-Science/2024-chelicerate-phylogenomics!
 
 Please fill in the appropriate checklist below (delete whatever is not relevant).
 These are the most common things requested on pull requests (PRs).
-
--->
 
 ## PR checklist
 
