@@ -17,17 +17,17 @@ cluster_assoc_test <-
     # Reduce the count data down to only include those for which we have cluster IDs
     cluster_ids <- cluster_res$umap_clusters
     count_dat <-
-      count_dat[which(rownames(count_dat) %in% rownames(cluster_ids)),]
-    
+      count_dat[which(rownames(count_dat) %in% rownames(cluster_ids)), ]
+
     # Calculate means
     suppressor_mean <-
       apply(count_dat[, which(colnames(count_dat) %in%
-                                suppressors)], 1, mean)
+        suppressors)], 1, mean)
     nonsuppressor_mean <-
       apply(count_dat[, which(colnames(count_dat) %in%
-                                nonsuppressors)], 1, mean)
+        nonsuppressors)], 1, mean)
     clusters <- cluster_ids$leiden_cluster_id
-    
+
     ps <- c()
     coef <- c()
     clust_freqs <- table(clusters)
@@ -42,10 +42,12 @@ cluster_assoc_test <-
         dat <-
           data.frame(
             "count" = c(suppressor_mean[cl_ids], nonsuppressor_mean[cl_ids]),
-            "detection_suppression" = c(rep(1, length(cl_ids)),
-                                        rep(0, length(cl_ids)))
+            "detection_suppression" = c(
+              rep(1, length(cl_ids)),
+              rep(0, length(cl_ids))
+            )
           )
-        
+
         fit <- lm(count ~ detection_suppression, data = dat)
         ps[idx] <- summary(fit)$coefficients[8]
         coef[idx] <- summary(fit)$coefficients[2]
@@ -61,8 +63,10 @@ cluster_assoc_test <-
         dat <-
           data.frame(
             "count" = c(suppressor_mean[cl_ids], nonsuppressor_mean[cl_ids]),
-            "detection_suppression" = c(rep(1, length(cl_ids)),
-                                        rep(0, length(cl_ids)))
+            "detection_suppression" = c(
+              rep(1, length(cl_ids)),
+              rep(0, length(cl_ids))
+            )
           )
         # Use Firth's logistic regression to reduce the bias in the ML
         # estimates that arise due to separation by adding a penalty to the
@@ -149,20 +153,20 @@ plot_cluster_traitcorr <-
       )
     extremes10_pos <-
       quantile(res$coefficient[which(res$pval <= 0.05 &
-                                       res$coefficient >= 0)], c(0.9))
+        res$coefficient >= 0)], c(0.9))
     extremes_pos <-
       quantile(res$coefficient[which(res$pval <= 0.05 &
-                                       res$coefficient >= 0)], c(0.95))
+        res$coefficient >= 0)], c(0.95))
     extremes10_neg <-
       quantile(res$coefficient[which(res$pval <= 0.05 &
-                                       res$coefficient <= 0)], c(0.1))
+        res$coefficient <= 0)], c(0.1))
     extremes_neg <-
       quantile(res$coefficient[which(res$pval <= 0.05 &
-                                       res$coefficient <= 0)], c(0.05))
+        res$coefficient <= 0)], c(0.05))
     extremes10 <- c(extremes10_neg, extremes10_pos)
     extremes <- c(extremes_neg, extremes_pos)
     pval_breaks <- c(0, 0.01, 0.05)
-    
+
     # Add a column indicating the significance level
     res$signif_level <- "No"
     res[which(res$pval <= 0.05), "signif_level"] <- "Yes"
@@ -170,35 +174,36 @@ plot_cluster_traitcorr <-
       res$pval <= 0.05 &
         res$coefficient <= extremes10[1] |
         res$pval <= 0.05 &
-        res$coefficient >= extremes10[2]
+          res$coefficient >= extremes10[2]
     ), "signif_level"] <- "Yes & Top 10% Coef."
     res[which(
       res$pval <= 0.05 &
         res$coefficient <= extremes[1] |
         res$pval <= 0.05 &
-        res$coefficient >= extremes[2]
+          res$coefficient >= extremes[2]
     ), "signif_level"] <- "Yes & Top 5% Coef."
     res$signif_level <-
       factor(res$signif_level,
-             levels = c("No", "Yes", "Yes & Top 10% Coef.", "Yes & Top 5% Coef."))
+        levels = c("No", "Yes", "Yes & Top 10% Coef.", "Yes & Top 5% Coef.")
+      )
     res$signif_fdr <- "No"
     res$signif_fdr[which(res$qval <= 0.05)] <- "Yes"
     res$signif_fdr <-
       factor(res$signif_fdr, levels = c("No", "Yes"))
-    
+
     # Label the clusters with the ten most extreme positive and negative
     # coeffients
     sig_clusts <-
-      res[res$pval <= 0.05,]
+      res[res$pval <= 0.05, ]
     label_neg <-
       which(sig_clusts$coefficient <= 0)[order(sig_clusts$coefficient[sig_clusts$coefficient <= 0], decreasing = F)][1:10]
     label_pos <-
       which(sig_clusts$coefficient >= 0)[order(sig_clusts$coefficient[sig_clusts$coefficient >= 0], decreasing = T)][1:10]
     to_label <- na.omit(c(label_neg, label_pos))
     if (length(to_label) > 0) {
-      sig_clusts <- sig_clusts[to_label,]
+      sig_clusts <- sig_clusts[to_label, ]
     }
-    
+
     # Now plot, highlighting those
     plt <- suppressWarnings(
       ggplot(
@@ -241,8 +246,10 @@ plot_cluster_traitcorr <-
           ),
           drop = FALSE
         ) +
-        scale_shape_manual(values = c("No" = 16, "Yes" = 15),
-                           drop = FALSE) +
+        scale_shape_manual(
+          values = c("No" = 16, "Yes" = 15),
+          drop = FALSE
+        ) +
         scale_color_manual(
           values = c(
             "No" = "#292928",
@@ -272,9 +279,9 @@ plot_cluster_traitcorr <-
         ylab(ylab_string) +
         theme(legend.position = "top")
     )
-    
+
     # Finally, remove the first column which was just used for plotting
-    res <- res[,-1]
+    res <- res[, -1]
     if (data_type == "gene_families") {
       colnames(res)[3] <- "gene_family_id"
     }
@@ -306,25 +313,25 @@ test_fam_corrs_per_clust <-
       clust_ogs <-
         rownames(phylo_profiling_res$umap_clusters)[which(phylo_profiling_res$umap_clusters$leiden_cluster_id == clstr)]
       clstr_dat <-
-        count_dat[which(rownames(count_dat) %in% clust_ogs),]
-      
+        count_dat[which(rownames(count_dat) %in% clust_ogs), ]
+
       # Reformat and add the trait:
       clstr_dat <- as.data.frame(t(clstr_dat))
       # If there are any columns where the predictor is invariant (i.e. all 0), remove
       invar <- which(colSums(clstr_dat) == 0)
       if (length(invar) > 0) {
-        clstr_dat <- clstr_dat[,-invar]
+        clstr_dat <- clstr_dat[, -invar]
       }
       clstr_dat$detection_suppression <- 0
       clstr_dat$detection_suppression[which(rownames(clstr_dat) %in% suppressors)] <-
         1
-      
+
       # Now, fit phylogenetic logistic regressions for each gene family, testing whether
       # they are significant predictors
       # Prepare the data:
       clstr_dat <-
-        clstr_dat[match(spptree$tip.label, rownames(clstr_dat)),]
-      
+        clstr_dat[match(spptree$tip.label, rownames(clstr_dat)), ]
+
       # Fit the models
       clust_res <-
         pbapply::pblapply(1:c(ncol(clstr_dat) - 1), function(i) {
@@ -345,14 +352,14 @@ test_fam_corrs_per_clust <-
           return(c(coefs, coef_ps))
         }, cl = detectCores())
       clust_res <- do.call(rbind, clust_res)
-      
+
       clstr_plts[[counter]] <-
         plot_cluster_traitcorr(
           pvals = clust_res[, 2],
           coefficients = clust_res[, 1],
           profile_type = "speciation",
           cluster_data = "combined",
-          cluster_ids = colnames(clstr_dat[,-ncol(clstr_dat)]),
+          cluster_ids = colnames(clstr_dat[, -ncol(clstr_dat)]),
           data_type = "gene_families",
           method = "logistic"
         )
@@ -365,7 +372,7 @@ test_fam_corrs_per_clust <-
           plot.title.position = "plot",
           plot.margin = margin(0, 1, 1, 1, "cm")
         )
-      
+
       clstr_plts[[counter]]$cluster_data <- clstr_dat
       names(clstr_plts)[counter] <- paste0("Cluster_", clstr)
       counter <- counter + 1
@@ -384,26 +391,29 @@ save_per_fam_associations <-
     if (length(event_type) > 1 & !is.null(per_fam_results)) {
       event_type <- "speciation"
     }
-    
+
     # Save these results out to file. Create a sub-directory for each event type,
     # since we will be saving a number of plots and tables for each.
     if (event_type == "speciation") {
       output_dir <- paste0(output_dir, "speciation_associations/")
       dir.create(output_dir,
-                 recursive = T,
-                 showWarnings = F)
+        recursive = T,
+        showWarnings = F
+      )
     } else if (event_type == "transfer") {
       output_dir <- paste0(output_dir, "transfer_associations/")
       dir.create(output_dir,
-                 recursive = T,
-                 showWarnings = F)
+        recursive = T,
+        showWarnings = F
+      )
     } else {
       output_dir <- paste0(output_dir, "loss_associations/")
       dir.create(output_dir,
-                 recursive = T,
-                 showWarnings = F)
+        recursive = T,
+        showWarnings = F
+      )
     }
-    
+
     # Loop through significant clusters and save outputs.
     for (clstr in 1:length(ls(per_fam_results))) {
       clstr_name <- str_to_lower(names(per_fam_results)[clstr])

@@ -17,14 +17,17 @@ library(cogeqc) # Version 1.2.1
 read_busco_summary <-
   function(busco_summary = NULL) {
     classes <-
-      c("Complete_SC",
+      c(
+        "Complete_SC",
         "Complete_duplicate",
         "Fragmented",
-        "Missing")
+        "Missing"
+      )
     busco_res <-
       read_table(busco_summary,
-                 progress = F,
-                 show_col_types = F)[,-c(3, 8)]
+        progress = F,
+        show_col_types = F
+      )[, -c(3, 8)]
     busco_res[1, 1] <- gsub(".fasta", "", busco_res[1, 1])
     colnames(busco_res) <-
       c(
@@ -53,11 +56,11 @@ calc_bs_support <- function(bs_trees = NULL,
                             species_tree = NULL) {
   # Compute bootstrap support
   support <- prop.clades(species_tree, bs_trees)
-  
+
   # Add support to the tree
   species_tree$node.label <-
     round(support, 2) # Multiply by 100 to convert to percentages
-  
+
   return(species_tree)
 }
 
@@ -84,20 +87,20 @@ plot_spp_tree <-
     if (is.null(samplesheet) & is.null(samplesheet_fpath)) {
       print("Error! Provide samplesheet object or filepath to samplesheet")
     }
-    
+
     # If plotting the asteroid tree, we need to do some light reformatting of
     # names that were induced through the use of disco to decompose multi-copy
     # gene family trees (replacement of underscores with hyphens in species names).
     tree$tip.label[order(tree$tip.label)] <-
       samplesheet$species[order(samplesheet$species)]
-    
+
     # If an outgroup is provided, root using those taxa.
     if (!is.null(outgroup)) {
       mrca <- getMRCA(tree, outgroup)
       tree <-
         reroot(tree, node = mrca, position = 0.5)
     }
-    
+
     # Now, handle the topological support values
     suppressWarnings(tree$node.label <- as.numeric(tree$node.label))
     if (nodelab_name == "Bootstrap") {
@@ -110,22 +113,28 @@ plot_spp_tree <-
           read.newick(paste0(workflow_outdir, "asteroid/asteroid.bsTrees.newick"))
         tree <- calc_bs_support(bs_trees, tree)
       }
-      support_tibble <- tibble(node = 1:Nnode(tree) + Ntip(tree),
-                               support = tree$node.label)
+      support_tibble <- tibble(
+        node = 1:Nnode(tree) + Ntip(tree),
+        support = tree$node.label
+      )
       support_cols <- 6
       support_lims <- c(25, 100)
       support_breaks <- c(25, 50, 75, 100)
     } else {
-      support_tibble <- tibble(node = 1:Nnode(tree) + Ntip(tree),
-                               support = as.numeric(round(tree$node.label, 2)))
+      support_tibble <- tibble(
+        node = 1:Nnode(tree) + Ntip(tree),
+        support = as.numeric(round(tree$node.label, 2))
+      )
       support_cols <- 3
       support_lims <- c(-1, 1)
-      support_breaks <- c(-1,-0.5, 0.0, 0.5, 1)
+      support_breaks <- c(-1, -0.5, 0.0, 0.5, 1)
     }
-    taxa_tibble <- tibble(tip = samplesheet$species,
-                          grp = samplesheet$taxonomy)
-    
-    
+    taxa_tibble <- tibble(
+      tip = samplesheet$species,
+      grp = samplesheet$taxonomy
+    )
+
+
     # Determine if we're plotting as a cladogram or not (e.g. forcing
     # the tree to be ultrametric, ignoring branch lengths)
     if (cladogram == T) {
@@ -133,7 +142,7 @@ plot_spp_tree <-
     } else {
       bl <- "branch.length"
     }
-    
+
     tree_plt <- suppressWarnings(
       ggtree(tree, branch.length = bl) %<+% support_tibble +
         geom_text(
@@ -160,7 +169,7 @@ plot_spp_tree <-
           breaks = support_breaks
         )
     )
-    
+
     tree_plt <- suppressMessages(
       suppressWarnings(
         tree_plt %<+% taxa_tibble +
@@ -189,7 +198,7 @@ plot_spp_tree <-
           guides(fill = guide_legend(title = grp_name, nrow = 2))
       )
     )
-    
+
     return(tree_plt)
   }
 
@@ -207,7 +216,7 @@ get_per_spp_og_counts <-
         pattern = "Results_Inflation",
         full.names = T
       )
-    
+
     # read in per-species gene copy number per gene family
     og_counts <-
       read.table(
@@ -216,11 +225,11 @@ get_per_spp_og_counts <-
         check.names = F
       )
     colnames(og_counts) <- gsub("\\..*", "", colnames(og_counts))
-    
+
     # And calculate the number of species in each gene family
     og_counts$NumSpecies <-
-      rowSums(og_counts[,-c(1, ncol(og_counts))] > 0)
-    
+      rowSums(og_counts[, -c(1, ncol(og_counts))] > 0)
+
     # Write out to file if an output directory is provided
     if (!is.null(out_dir)) {
       # Create the directory if it doesn't yet exist
@@ -253,7 +262,7 @@ get_ofinder_summaries <-
       )
     phylohog_dir <-
       paste0(results_dir, "orthofinder/complete_dataset/Results_HOGs/")
-    
+
     # read in hierarchical orthogroup pairwise species overlaps
     hog_spp_overlaps <-
       read.table(
@@ -263,7 +272,7 @@ get_ofinder_summaries <-
         ),
         check.names = F
       )
-    
+
     # read in orthogroup (gene family) pairwise species overlaps
     og_spp_overlaps <-
       read.table(
@@ -273,7 +282,7 @@ get_ofinder_summaries <-
         ),
         check.names = F
       )
-    
+
     # Read in overall OG stats: these will be reformatted in
     # a more useful way and plotted
     overall_stats_fpath <-
@@ -298,41 +307,50 @@ get_ofinder_summaries <-
           "percentage_of_genes"
         )
       )
-    
+
     # Exclude rows for which all entries = 0
     og_gene_freqs <-
-      og_gene_freqs[which(rowSums(og_gene_freqs[,-1]) > 0),]
+      og_gene_freqs[which(rowSums(og_gene_freqs[, -1]) > 0), ]
     og_gene_freqs[, 1] <-
       factor(og_gene_freqs$avg_genes_per_spp_in_og,
-             levels = og_gene_freqs$avg_genes_per_spp_in_og)
-    
+        levels = og_gene_freqs$avg_genes_per_spp_in_og
+      )
+
     # Now begin to plot
     og_gene_hists <- list()
     og_gene_hists[[1]] <- suppressWarnings(
-      ggplot(data = og_gene_freqs[-1,],
-             aes(x = avg_genes_per_spp_in_og,
-                 y = number_of_ogs)) +
+      ggplot(
+        data = og_gene_freqs[-1, ],
+        aes(
+          x = avg_genes_per_spp_in_og,
+          y = number_of_ogs
+        )
+      ) +
         geom_histogram(
           stat = "identity",
           color = "black",
           fill = "grey"
         ) +
         theme_classic(base_size = 12) +
-        theme(axis.text.x.bottom =
-                element_text(
-                  angle = 45,
-                  vjust = 1,
-                  hjust = 1
-                )) +
+        theme(
+          axis.text.x.bottom =
+            element_text(
+              angle = 45,
+              vjust = 1,
+              hjust = 1
+            )
+        ) +
         xlab("Avg. # genes-per-spp in GF") +
         ylab("# Families")
     )
-    
+
     og_gene_hists[[2]] <- suppressWarnings(
       ggplot(
-        data = og_gene_freqs[-1,],
-        aes(x = avg_genes_per_spp_in_og,
-            y = percentage_of_ogs)
+        data = og_gene_freqs[-1, ],
+        aes(
+          x = avg_genes_per_spp_in_og,
+          y = percentage_of_ogs
+        )
       ) +
         geom_histogram(
           stat = "identity",
@@ -340,41 +358,25 @@ get_ofinder_summaries <-
           fill = "grey"
         ) +
         theme_classic(base_size = 12) +
-        theme(axis.text.x.bottom =
-                element_text(
-                  angle = 45,
-                  vjust = 1,
-                  hjust = 1
-                )) +
+        theme(
+          axis.text.x.bottom =
+            element_text(
+              angle = 45,
+              vjust = 1,
+              hjust = 1
+            )
+        ) +
         xlab("Avg. # genes-per-spp in GF") +
         ylab("% Families")
     )
-    
+
     og_gene_hists[[3]] <- suppressWarnings(
-      ggplot(data = og_gene_freqs[-1,],
-             aes(x = avg_genes_per_spp_in_og,
-                 y = number_of_genes)) +
-        geom_histogram(
-          stat = "identity",
-          color = "black",
-          fill = "grey"
-        ) +
-        theme_classic(base_size = 12) +
-        theme(axis.text.x.bottom =
-                element_text(
-                  angle = 45,
-                  vjust = 1,
-                  hjust = 1
-                )) +
-        xlab("Avg. # genes-per-spp in GF") +
-        ylab("# Genes")
-    )
-    
-    og_gene_hists[[4]] <- suppressWarnings(
       ggplot(
-        data = og_gene_freqs[-1,],
-        aes(x = avg_genes_per_spp_in_og,
-            y = percentage_of_genes)
+        data = og_gene_freqs[-1, ],
+        aes(
+          x = avg_genes_per_spp_in_og,
+          y = number_of_genes
+        )
       ) +
         geom_histogram(
           stat = "identity",
@@ -382,29 +384,58 @@ get_ofinder_summaries <-
           fill = "grey"
         ) +
         theme_classic(base_size = 12) +
-        theme(axis.text.x.bottom =
-                element_text(
-                  angle = 45,
-                  vjust = 1,
-                  hjust = 1
-                )) +
+        theme(
+          axis.text.x.bottom =
+            element_text(
+              angle = 45,
+              vjust = 1,
+              hjust = 1
+            )
+        ) +
+        xlab("Avg. # genes-per-spp in GF") +
+        ylab("# Genes")
+    )
+
+    og_gene_hists[[4]] <- suppressWarnings(
+      ggplot(
+        data = og_gene_freqs[-1, ],
+        aes(
+          x = avg_genes_per_spp_in_og,
+          y = percentage_of_genes
+        )
+      ) +
+        geom_histogram(
+          stat = "identity",
+          color = "black",
+          fill = "grey"
+        ) +
+        theme_classic(base_size = 12) +
+        theme(
+          axis.text.x.bottom =
+            element_text(
+              angle = 45,
+              vjust = 1,
+              hjust = 1
+            )
+        ) +
         xlab("Avg. # genes-per-spp in GF") +
         ylab("% Genes")
     )
-    
+
     # Combine into one
     og_gene_hists_plts <-
       plot_grid(og_gene_hists[[1]],
-                og_gene_hists[[2]],
-                og_gene_hists[[3]],
-                og_gene_hists[[4]],
-                ncol = 2)
-    
+        og_gene_hists[[2]],
+        og_gene_hists[[3]],
+        og_gene_hists[[4]],
+        ncol = 2
+      )
+
     # print the plots if that is requested
     if (show_plots == T) {
       print(og_gene_hists_plts)
     }
-    
+
     ###################################################
     # Now plot the distribution of orthogroups across #
     # species                                         #
@@ -415,13 +446,19 @@ get_ofinder_summaries <-
         skip = 48,
         show_col_types = FALSE,
         col_types = c("nn"),
-        col_names = c("number_of_species_in_og",
-                      "number_of_ogs")
+        col_names = c(
+          "number_of_species_in_og",
+          "number_of_ogs"
+        )
       )
     og_spp_hist <- suppressWarnings(
-      ggplot(data = og_spp_counts,
-             aes(x = number_of_species_in_og,
-                 y = number_of_ogs)) +
+      ggplot(
+        data = og_spp_counts,
+        aes(
+          x = number_of_species_in_og,
+          y = number_of_ogs
+        )
+      ) +
         geom_histogram(
           stat = "identity",
           color = "black",
@@ -432,17 +469,17 @@ get_ofinder_summaries <-
         xlab("# Species in Gene Family") +
         ylab("# Gene Families")
     )
-    
+
     # And plot if requested
     if (show_plots == T) {
       print(og_spp_hist)
     }
-    
+
     # Write out to file if an output directory is provided
     if (!is.null(out_dir)) {
       # Create the directory if it doesn't yet exist
       dir.create(out_dir, showWarnings = F, recursive = T)
-      
+
       # Write out to file, both the histograms of gene count per og/genes per
       # species per orthogroup
       ggsave(
@@ -459,7 +496,7 @@ get_ofinder_summaries <-
         col.names = T,
         row.names = F
       )
-      
+
       # Same for histograms of eh # of species per orthogroup.
       ggsave(
         og_spp_hist,
@@ -490,20 +527,22 @@ summ_genefam_composition <-
         sep = ",",
         header = T
       )
-    
+
     # Plot the mean species gene copy number against the number of species
     # in each gene family
     copynum_v_numspp <-
       ggplot(data = res, aes(y = mean_copy_num, x = num_spp)) +
-      geom_point(position = position_jitter(width = 0.2),
-                 alpha = 0.25,
-                 size = 0.75) +
+      geom_point(
+        position = position_jitter(width = 0.2),
+        alpha = 0.25,
+        size = 0.75
+      ) +
       theme_classic(base_size = 14) +
       scale_y_log10() +
       annotation_logticks(sides = "l") +
       xlab("# Species in gene family") +
       ylab("Mean per-species\ngene copy #")
-    
+
     # And plot the histogram of species counts across all gene families
     fam_sppcount_dist <-
       ggplot(data = res, aes(x = num_spp)) +
@@ -513,16 +552,16 @@ summ_genefam_composition <-
       annotation_logticks(sides = "l") +
       xlab("# Species in gene family") +
       ylab("# Gene families")
-    
+
     # Combine them
     genefam_composition_plt <-
       suppressMessages(plot_grid(copynum_v_numspp, fam_sppcount_dist, ncol = 2))
-    
+
     # print the plots if that is requested
     if (show_plots == T) {
       print(genefam_composition_plt)
     }
-    
+
     # And save
     ggsave(
       genefam_composition_plt,
@@ -565,12 +604,12 @@ get_per_spp_ofinder_stats <-
     if (is.null(samplesheet) & is.null(samplesheet_fpath)) {
       print("Error! Provide samplesheet object or filepath to samplesheet")
     }
-    
+
     ###########################################
     # Orthogroup statistics per species       #
     ###########################################
     species <- tree$tip.label[order(tree$tip.label)]
-    
+
     og_stats_perspp_fpath <-
       list.files(
         path = paste0(results_dir, "/orthofinder/complete_dataset/"),
@@ -578,7 +617,7 @@ get_per_spp_ofinder_stats <-
         recursive = T,
         full.names = T
       )
-    
+
     # First read in the overall stats per species and write out as a table
     og_stats_perspp <-
       read_tsv(
@@ -588,17 +627,19 @@ get_per_spp_ofinder_stats <-
         col_types = c("f", rep("n", length(species))),
         col_names = c("Statistic", species)
       )
-    
+
     # Transpose and then plot stats as a heatmap alongside the the species tree
     og_stats_perspp <- og_stats_perspp %>%
       gather(key = species, value = value, 2:ncol(og_stats_perspp)) %>%
       spread(key = names(og_stats_perspp)[1], value = "value")
     # Check the above for use of "spread_"
     og_stats_perspp <-
-      data.frame(og_stats_perspp[order(match(og_stats_perspp$species,
-                                             tree$tip.label)),])
+      data.frame(og_stats_perspp[order(match(
+        og_stats_perspp$species,
+        tree$tip.label
+      )), ])
     rownames(og_stats_perspp) <- tree$tip.label
-    
+
     # Pull out and rename relevant stats
     plot_dat_nums <- og_stats_perspp[c(2, 3, 4, 7, 9, 10)]
     plot_dat_props <- og_stats_perspp[c(5, 6, 8, 11)]
@@ -618,12 +659,14 @@ get_per_spp_ofinder_stats <-
         "% OGs containing spp.",
         "% genes in spp. specific OGs"
       )
-    
+
     # Now prepare to plot
     # Get metadata for plotting
-    taxa_tibble <- tibble(tip = samplesheet$species,
-                          grp = samplesheet$taxonomy)
-    
+    taxa_tibble <- tibble(
+      tip = samplesheet$species,
+      grp = samplesheet$taxonomy
+    )
+
     # Root if using the asteroid tree and a specified outgroup
     if (!is.null(outgroup)) {
       # find the most recent common ancestor of the outgroup
@@ -635,10 +678,11 @@ get_per_spp_ofinder_stats <-
       # root the tree at the parent node
       tree <-
         root(tree,
-             edgelabel = T,
-             node = parent_edge_number,
-             position = 0.25)
-      
+          edgelabel = T,
+          node = parent_edge_number,
+          position = 0.25
+        )
+
       # Make the basic tree plot
       base_p <- suppressMessages(
         ggtree(tree, size = 0.75, branch.length = "none") %<+% taxa_tibble +
@@ -647,9 +691,9 @@ get_per_spp_ofinder_stats <-
     } else {
       # Make the basic tree plot
       base_p <- suppressMessages(ggtree(tree, size = 0.75) %<+% taxa_tibble +
-                                   geom_tiplab(size = 7, as_ylab = T))
+        geom_tiplab(size = 7, as_ylab = T))
     }
-    
+
     # Now one with the tip labels
     tree_p <- suppressMessages(
       base_p +
@@ -674,7 +718,7 @@ get_per_spp_ofinder_stats <-
         ) +
         new_scale_fill()
     )
-    
+
     # Combine with heatmap of per-species orthogroup count stats
     count_p <- suppressMessages(
       gheatmap(
@@ -694,7 +738,7 @@ get_per_spp_ofinder_stats <-
         ) +
         theme(legend.position = "none")
     )
-    
+
     # Get legends...
     # For the tree & tip labels
     leg1 <-
@@ -706,7 +750,7 @@ get_per_spp_ofinder_stats <-
             legend.key.width = unit(1, "cm")
           )
       )
-    
+
     # For the count stats
     leg2 <- get_legend(
       count_p +
@@ -724,7 +768,7 @@ get_per_spp_ofinder_stats <-
           legend.title = element_text(size = 10)
         )
     )
-    
+
     # And finally, proportional stats
     leg3 <- suppressMessages(get_legend(
       gheatmap(
@@ -758,7 +802,7 @@ get_per_spp_ofinder_stats <-
         )) +
         labs(fill = "Percent")
     ))
-    
+
     og_spp_stats_p <- suppressMessages(
       gheatmap(
         tree_p,
@@ -778,7 +822,7 @@ get_per_spp_ofinder_stats <-
         theme(legend.position = "none") +
         new_scale_fill()
     )
-    
+
     og_spp_stats_p <- suppressMessages(
       gheatmap(
         og_spp_stats_p,
@@ -803,21 +847,22 @@ get_per_spp_ofinder_stats <-
         ) +
         coord_cartesian(clip = "off")
     )
-    
+
     legs <-
       plot_grid(leg1, leg2, leg3, ncol = 3)
-    
+
     og_spp_stats_p_final <-
       plot_grid(legs,
-                og_spp_stats_p,
-                ncol = 1,
-                rel_heights = c(0.15, 1))
-    
+        og_spp_stats_p,
+        ncol = 1,
+        rel_heights = c(0.15, 1)
+      )
+
     # Plot out if requested
     if (show_plots == T) {
       print(og_spp_stats_p_final)
     }
-    
+
     # Write out to file if an output directory is provided
     if (!is.null(out_dir)) {
       # Create the directory if it doesn't yet exist
@@ -830,7 +875,7 @@ get_per_spp_ofinder_stats <-
         col.names = T,
         quote = F
       )
-      
+
       # That was involved.... Save this to a pdf
       ggsave(
         og_spp_stats_p_final,
@@ -846,7 +891,7 @@ get_per_spp_ofinder_stats <-
         dpi = 600
       )
     }
-    
+
     # Return both the dataframe and plot of per-species stats (in the inevitable
     # case that plotting size needs to tweaked for the given dataset)
     return(
@@ -881,26 +926,26 @@ get_og_event_counts <-
         number_gene_copies = NA,
         number_species = NA
       )
-    
+
     # Read in the the orthogroup-wide (across spp) event counts
     tmp <- read.table(per_og_events[i], sep = ":", check.names = F)
     gf <- gsub("_eventCounts.txt", "", per_og_events[i]) %>%
       gsub(".*reconciliations/", "", .)
     gf_col <- data.frame(gene_family = gf)
-    
+
     # Get the per-species gene-count for this gene family
     species <-
       colnames(per_spp_og_counts)[-c(1, c((ncol(
         per_spp_og_counts
       ) - 1):ncol(per_spp_og_counts)))]
-    
+
     counts <-
-      per_spp_og_counts[which(per_spp_og_counts$Orthogroup == gf),]
+      per_spp_og_counts[which(per_spp_og_counts$Orthogroup == gf), ]
     og_spps <- species[which(species %in% colnames(counts))]
-    
+
     # Now fill
-    per_og_event_counts[1,] <- c(gf, tmp$V2, counts$NumSpecies)
-    
+    per_og_event_counts[1, ] <- c(gf, tmp$V2, counts$NumSpecies)
+
     # Return these event results as output
     return(per_og_event_counts)
   }
@@ -916,19 +961,20 @@ get_og_event_rates <-
         loss = NA,
         transfer = NA
       )
-    
+
     # Identify which gene family we"re dealing with
     gf <-
       gsub(".*OG", "OG", per_og_rates_fpaths[i]) %>%
       gsub("/stats.txt", "", .)
-    
+
     # Read in and store those rates
-    per_og_event_rates[1,] <-
+    per_og_event_rates[1, ] <-
       c(gf, scan(per_og_rates_fpaths[i],
-                 what = "character", quiet = T)[6:8])
+        what = "character", quiet = T
+      )[6:8])
     per_og_event_rates[1, 2:4] <-
       as.numeric(per_og_event_rates[1, 2:4])
-    
+
     # And return as output
     return(per_og_event_rates)
   }
@@ -936,12 +982,12 @@ get_og_event_rates <-
 get_spp_event_rates <-
   function(i, per_spp_rates_fpaths = per_spp_rates_fpaths) {
     rates <- read.table(per_spp_rates_fpaths[i], header = F, sep = " ")
-    
+
     # Identify which gene family we're dealing with
     gf <-
       gsub(".*OG", "OG", per_spp_rates_fpaths[i]) %>%
       gsub("/per_species_rates.txt", "", .)
-    
+
     # Create a dataframe to store species-level rates
     per_og_event_rates <-
       data.frame(
@@ -951,7 +997,7 @@ get_spp_event_rates <-
         loss = rates[, 3],
         transfer = rates[, 4]
       )
-    
+
     # And return as output
     return(per_og_event_rates)
   }
@@ -965,21 +1011,22 @@ get_og_events_per_spp <-
       colnames(per_spp_og_counts)[-c(1, c((ncol(
         per_spp_og_counts
       ) - 1):ncol(per_spp_og_counts)))]
-    
+
     # Read in table of per-species event counts for this gene family
     tmp <-
       read.table(per_spp_og_events[i],
-                 row.names = 1,
-                 check.names = F)
+        row.names = 1,
+        check.names = F
+      )
     tmp <-
-      data.frame(t(tmp[which(rownames(tmp) %in% species),]), check.names = F)
-    
+      data.frame(t(tmp[which(rownames(tmp) %in% species), ]), check.names = F)
+
     # Identify which gene family we"re dealing with
     gf <-
       gsub("_speciesEventCounts.txt", "", per_spp_og_events[i]) %>%
       gsub(".*reconciliations/", "", .)
     gf_col <- data.frame(gene_family = gf)
-    
+
     # Create one empty table for each parameter for the per-species counts per OG
     per_spp_og_speciation <-
       data.frame(matrix(ncol = length(species) + 1, nrow = 0))
@@ -993,13 +1040,13 @@ get_og_events_per_spp <-
     per_spp_og_loss <-
       data.frame(matrix(ncol = length(species) + 1, nrow = 0))
     colnames(per_spp_og_loss) <- c("gene_family", species)
-    
+
     # And populate counts of duplication, transfer and loss
-    specs <- cbind(gf_col, tmp[1,])
-    dups <- cbind(gf_col, tmp[2,])
-    loss <- cbind(gf_col, tmp[3,])
-    transf <- cbind(gf_col, tmp[4,])
-    
+    specs <- cbind(gf_col, tmp[1, ])
+    dups <- cbind(gf_col, tmp[2, ])
+    loss <- cbind(gf_col, tmp[3, ])
+    transf <- cbind(gf_col, tmp[4, ])
+
     # Now populate, allowing for species to not be present
     per_spp_og_speciation <-
       plyr::rbind.fill(per_spp_og_speciation, specs)
@@ -1009,7 +1056,7 @@ get_og_events_per_spp <-
       plyr::rbind.fill(per_spp_og_loss, loss)
     per_spp_og_transfer <-
       plyr::rbind.fill(per_spp_og_transfer, transf)
-    
+
     return(
       list(
         speciations = per_spp_og_speciation,
@@ -1051,14 +1098,14 @@ get_tranfer_donor_recips <-
            spp_tranf_rates_fpaths = NULL) {
     species <-
       colnames(per_spp_og_counts)[-c(1, (ncol(per_spp_og_counts) - 1):ncol(per_spp_og_counts))]
-    
+
     per_spp_og_transfer_donor <-
       data.frame(matrix(ncol = length(species) + 1, nrow = 0))
     colnames(per_spp_og_transfer_donor) <- c("gene_family", species)
     per_spp_og_transfer_recip <-
       data.frame(matrix(ncol = length(species) + 1, nrow = 0))
     colnames(per_spp_og_transfer_recip) <- c("gene_family", species)
-    
+
     transf_count_mat <-
       matrix(
         nrow = length(species),
@@ -1070,8 +1117,8 @@ get_tranfer_donor_recips <-
     gf <-
       gsub(".*OG", "OG", spp_tranf_rates_fpaths[i]) %>% gsub("_transfers.txt", "", .)
     # And the species that are in this gene family
-    og_spps <- per_spp_og_counts[which(per_spp_og_counts$Orthogroup == gf),-c(1, (ncol(per_spp_og_counts) - 1):ncol(per_spp_og_counts))]
-    og_spps <- colnames(og_spps[which(og_spps[1,] > 0),])
+    og_spps <- per_spp_og_counts[which(per_spp_og_counts$Orthogroup == gf), -c(1, (ncol(per_spp_og_counts) - 1):ncol(per_spp_og_counts))]
+    og_spps <- colnames(og_spps[which(og_spps[1, ] > 0), ])
     # And then the table of recipient-donor events
     # But only if transfer events were inferred
     if (file.size(spp_tranf_rates_fpaths[i]) != 0L) {
@@ -1084,7 +1131,7 @@ get_tranfer_donor_recips <-
       recips <- summary(as.factor(tmp$V2))
       recips <-
         data.frame(as.list(recips[which(names(recips) %in% species)]), check.names = F)
-      
+
       # And only if the transfer events occurred between tips
       # Make sure species included in the gene family have integer
       # counts, all other species NA
@@ -1094,24 +1141,28 @@ get_tranfer_donor_recips <-
         # If there are species who did not donate gene copies via transfer:
         if (length(non_donors) > 0) {
           non_donors <-
-            data.frame(matrix(
-              ncol = length(non_donors),
-              dimnames = list(NULL, non_donors),
-              data = 0
-            ),
-            check.names = F)
+            data.frame(
+              matrix(
+                ncol = length(non_donors),
+                dimnames = list(NULL, non_donors),
+                data = 0
+              ),
+              check.names = F
+            )
           donors <- cbind(donors, non_donors)
         }
         per_spp_og_transfer_donor <-
           plyr::rbind.fill(per_spp_og_transfer_donor, donors)
       } else {
         non_donors <-
-          data.frame(matrix(
-            ncol = length(og_spps),
-            dimnames = list(NULL, og_spps),
-            data = 0
-          ),
-          check.names = F)
+          data.frame(
+            matrix(
+              ncol = length(og_spps),
+              dimnames = list(NULL, og_spps),
+              data = 0
+            ),
+            check.names = F
+          )
         per_spp_og_transfer_donor <-
           plyr::rbind.fill(per_spp_og_transfer_donor, non_donors)
       }
@@ -1121,52 +1172,60 @@ get_tranfer_donor_recips <-
         # If there are species who did not receive gene copies via transfer:
         if (length(non_recips) > 0) {
           non_recips <-
-            data.frame(matrix(
-              ncol = length(non_recips),
-              dimnames = list(NULL, non_recips),
-              data = 0
-            ),
-            check.names = F)
+            data.frame(
+              matrix(
+                ncol = length(non_recips),
+                dimnames = list(NULL, non_recips),
+                data = 0
+              ),
+              check.names = F
+            )
           recips <- cbind(recips, non_recips)
         }
         per_spp_og_transfer_recip <-
           plyr::rbind.fill(per_spp_og_transfer_recip, recips)
       } else {
         non_recips <-
-          data.frame(matrix(
-            ncol = length(og_spps) + 1,
-            dimnames = list(NULL, c("gene_family", og_spps)),
-            data = c(gf, rep(0, length(og_spps)))
-          ),
-          check.names = F)
+          data.frame(
+            matrix(
+              ncol = length(og_spps) + 1,
+              dimnames = list(NULL, c("gene_family", og_spps)),
+              data = c(gf, rep(0, length(og_spps)))
+            ),
+            check.names = F
+          )
         per_spp_og_transfer_recip <-
           plyr::rbind.fill(per_spp_og_transfer_recip, non_recips)
       }
       # Now fill in the donor-recipient matrix
-      tmp <- tmp[which(tmp$V1 %in% species & tmp$V2 %in% species),]
+      tmp <- tmp[which(tmp$V1 %in% species & tmp$V2 %in% species), ]
       for (x in 1:nrow(tmp)) {
         donor <- which(species == tmp$V1[x])
         recip <- which(species == tmp$V2[x])
-        
+
         # y-axis: recipient, x-axis: donor
         transf_count_mat[donor, recip] <-
           transf_count_mat[donor, recip] + 1
       }
     } else {
       per_spp_og_transfer_donor <-
-        data.frame(matrix(
-          ncol = length(og_spps) + 1,
-          dimnames = list(NULL, c("gene_family", og_spps)),
-          data = c(gf, rep(0, length(og_spps)))
-        ),
-        check.names = F)
+        data.frame(
+          matrix(
+            ncol = length(og_spps) + 1,
+            dimnames = list(NULL, c("gene_family", og_spps)),
+            data = c(gf, rep(0, length(og_spps)))
+          ),
+          check.names = F
+        )
       per_spp_og_transfer_recip <-
-        data.frame(matrix(
-          ncol = length(og_spps) + 1,
-          dimnames = list(NULL, c("gene_family", og_spps)),
-          data = c(gf, rep(0, length(og_spps)))
-        ),
-        check.names = F)
+        data.frame(
+          matrix(
+            ncol = length(og_spps) + 1,
+            dimnames = list(NULL, c("gene_family", og_spps)),
+            data = c(gf, rep(0, length(og_spps)))
+          ),
+          check.names = F
+        )
     }
     return(
       list(
@@ -1185,7 +1244,7 @@ summarize_generax_per_family <-
            out_dir = NULL,
            nparallel = detectCores() - 1) {
     generax_dir <- paste0(results_dir, "generax/per_family_rates")
-    
+
     # Get lists of files for each sort of analysis/output from generax that we"ll be summarizing
     per_og_events <-
       list.files(
@@ -1224,7 +1283,7 @@ summarize_generax_per_family <-
         pattern = "Coverage.txt",
         recursive = T
       )
-    
+
     # Get the counts of each event type (duplications, transfers, losses, etc)
     # per-og, across all species
     message("Extracting event counts per-orthogroup, across all species.")
@@ -1239,7 +1298,7 @@ summarize_generax_per_family <-
           mc.cores = nparallel
         )
       )
-    
+
     # And the same, but for rates
     message("Extracting event rates per-orthogroup, across all species.")
     per_og_event_rates <-
@@ -1252,7 +1311,7 @@ summarize_generax_per_family <-
           mc.cores = nparallel
         )
       )
-    
+
     # Get the counts of events per species, per orthogroup
     # Begin by first summarizing these event counts per orthogroup
     message("Extracting event counts per-species, per-orthogroup.")
@@ -1264,7 +1323,7 @@ summarize_generax_per_family <-
         per_spp_og_events = per_spp_og_events,
         mc.cores = nparallel
       )
-    
+
     # And then pull out each event type individually
     message("Now, pulling out each event type individually.")
     per_spp_og_speciation <-
@@ -1297,10 +1356,10 @@ summarize_generax_per_family <-
           mc.cores = nparallel
         )
       )
-    
+
     # Clean up the large interim list
     rm(per_spp_events)
-    
+
     # Now, focusing on transfers - get a summed matrix of transfers among species,
     # with donors along the x-axis, and recipients along the y.
     # y-axis: recipient, x-axis: donor
@@ -1321,7 +1380,7 @@ summarize_generax_per_family <-
     transf_donors <- do.call("rbind", transf_res$gf_transfer_donors)
     message("Pulling out the count of transfer-recipient events for each species per gene family")
     transf_recips <- do.call("rbind", transf_res$gf_transfer_recips)
-    
+
     # Generate a list containing alll required outputs for plotting
     results <- list(
       rates_per_og = per_og_event_rates,
@@ -1333,7 +1392,7 @@ summarize_generax_per_family <-
       transfer_donor_counts = transf_donors,
       transfer_recip_counts = transf_recips
     )
-    
+
     # Write each output to their own stand-alone summary table
     if (!is.null(out_dir)) {
       # Create the directory if it doesn't yet exist
@@ -1425,7 +1484,7 @@ summarize_generax_per_species <-
            out_dir = NULL,
            nparallel = detectCores() - 1) {
     generax_dir <- paste0(results_dir, "generax/per_species_rates")
-    
+
     # Get lists of files for each sort of analysis/output from generax that we"ll be summarizing
     per_og_events <-
       list.files(
@@ -1462,7 +1521,7 @@ summarize_generax_per_species <-
         pattern = "Coverage.txt",
         recursive = T
       )
-    
+
     # Get the counts of each event type (duplications, transfers, losses, etc)
     # per-og, across all species
     message("Extracting event counts for each species per gene family.")
@@ -1477,7 +1536,7 @@ summarize_generax_per_species <-
           mc.cores = nparallel
         )
       )
-    
+
     # And the same, but for rates
     message("Extracting event rates per-species, for each gene family.")
     per_spp_event_rates <-
@@ -1490,7 +1549,7 @@ summarize_generax_per_species <-
           mc.cores = nparallel
         )
       )
-    
+
     # Get the counts of events per species, per orthogroup
     # Begin by first summarizing these event counts per orthogroup
     message("Extracting event counts per-species, per-orthogroup.")
@@ -1502,7 +1561,7 @@ summarize_generax_per_species <-
         per_spp_og_events = per_spp_og_events,
         mc.cores = nparallel
       )
-    
+
     # And then pull out each event type individually
     message("Now, pulling out each event type individually.")
     per_spp_og_speciation <-
@@ -1535,10 +1594,10 @@ summarize_generax_per_species <-
           mc.cores = nparallel
         )
       )
-    
+
     # Clean up the large interim list
     rm(per_spp_events)
-    
+
     # Now, focusing on transfers - get a summed matrix of transfers among species,
     # with donors along the x-axis, and recipients along the y.
     # y-axis: recipient, x-axis: donor
@@ -1559,7 +1618,7 @@ summarize_generax_per_species <-
     transf_donors <- do.call("rbind", transf_res$gf_transfer_donors)
     message("Pulling out the count of transfer-recipient events for each species per gene family")
     transf_recips <- do.call("rbind", transf_res$gf_transfer_recips)
-    
+
     # Generate a list containing alll required outputs for plotting
     results <- list(
       spp_rates_per_og = per_spp_event_rates,
@@ -1571,7 +1630,7 @@ summarize_generax_per_species <-
       transfer_donor_counts = transf_donors,
       transfer_recip_counts = transf_recips
     )
-    
+
     # Write each output to their own stand-alone summary table
     if (!is.null(out_dir)) {
       # Create the directory if it doesn't yet exist
@@ -1670,12 +1729,12 @@ update_node_names <- function(species_rates = NULL,
   for (i in 1:length(tiplabs)) {
     nodelabs <- gsub(tiplabs[i], tree$tip.label[i], nodelabs)
   }
-  
+
   # Now identify the node number that corresponds to each of GeneRax's named nodes
   for (node_name in nodelabs) {
     # Now split the string on underscores to get the taxa names
     taxa <- unlist(strsplit(node_name, "_"))[2:3]
-    
+
     # Find the node number (MRCA) corresponding to the taxa in the original node name
     nodelabs[which(nodelabs == node_name)] <-
       getMRCA(tree, match(taxa, tree$tip.label))
@@ -1683,13 +1742,13 @@ update_node_names <- function(species_rates = NULL,
   # Now update the rates table with these node ids
   species_rates$node[-c(1:length(tree$tip.label))] <- nodelabs
   rownames(species_rates) <- species_rates$node
-  
+
   # And do the same for species (terminal nodes).
   # These are ordered intuitively.
   species_rates$node[1:length(tree$tip.label)] <-
     1:length(tree$tip.label)
   species_rates$node <- as.numeric(species_rates$node)
-  
+
   return(species_rates)
 }
 
@@ -1702,12 +1761,12 @@ plot_rates_per_spp <-
            rate_cols = list(arcadia_dahlias, arcadia_pansies, arcadia_poppies)) {
     # Combine the DTL rates with the species tree for plotting.
     dtl_rates_tree <- full_join(tree, species_rates, by = "node")
-    
+
     # define a function to get the plotting breakpoints:
     get_colbreaks <- function(x) {
       c(min(x), mean(range(x)), max(x))
     }
-    
+
     # And plot:
     dup_rate_p <-
       ggtree(
@@ -1721,8 +1780,9 @@ plot_rates_per_spp <-
         colors = rate_cols[[1]]$color_dict[1:3],
         values = c(0, 0.3, 1.0),
         name = "Duplication\nRate",
-        labels = function(values)
+        labels = function(values) {
           sprintf("%.2f", values)
+        }
       ) +
       geom_tiplab(
         offset = tip_offset,
@@ -1738,7 +1798,7 @@ plot_rates_per_spp <-
         legend.title = element_text(size = 12)
       ) +
       coord_cartesian(clip = "off")
-    
+
     transf_rate_p <-
       ggtree(
         dtl_rates_tree,
@@ -1750,8 +1810,9 @@ plot_rates_per_spp <-
       scale_color_gradientn(
         colors = rate_cols[[2]]$color_dict[1:4],
         name = "Transfer\nRate",
-        labels = function(values)
+        labels = function(values) {
           sprintf("%.2f", values)
+        }
       ) +
       geom_tiplab(
         offset = tip_offset,
@@ -1767,7 +1828,7 @@ plot_rates_per_spp <-
         legend.title = element_text(size = 12)
       ) +
       coord_cartesian(clip = "off")
-    
+
     loss_rate_p <-
       ggtree(
         dtl_rates_tree,
@@ -1779,8 +1840,9 @@ plot_rates_per_spp <-
       scale_color_gradientn(
         colors = rev(rate_cols[[3]]$color_dict[4:8]),
         name = "Loss\nRate",
-        labels = function(values)
+        labels = function(values) {
           sprintf("%.2f", values)
+        }
       ) +
       geom_tiplab(
         offset = tip_offset,
@@ -1796,7 +1858,7 @@ plot_rates_per_spp <-
         legend.title = element_text(size = 12)
       ) +
       coord_cartesian(clip = "off")
-    
+
     dt_ratio_p <-
       ggtree(
         dtl_rates_tree,
@@ -1808,8 +1870,9 @@ plot_rates_per_spp <-
       scale_color_gradientn(
         colors = rate_cols[[3]]$color_dict[1:4],
         name = "Duplication /\nTransfer Rate",
-        labels = function(values)
+        labels = function(values) {
           sprintf("%.2f", values)
+        }
       ) +
       geom_tiplab(
         offset = tip_offset,
@@ -1825,7 +1888,7 @@ plot_rates_per_spp <-
         legend.title = element_text(size = 12)
       ) +
       coord_cartesian(clip = "off")
-    
+
     rate_plts <- list(
       "rate_tree_data" = dtl_rates_tree,
       "duplication" = dup_rate_p,

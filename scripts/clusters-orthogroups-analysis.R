@@ -30,8 +30,9 @@ orthogroups_separated <- orthogroups_long %>%
 annotation_directory <- "./annotated"
 annotation_files <-
   list.files(annotation_directory,
-             pattern = "*.tsv",
-             full.names = TRUE)
+    pattern = "*.tsv",
+    full.names = TRUE
+  )
 
 all_annotations <- map_df(annotation_files, function(file_name) {
   read_tsv(file_name) %>%
@@ -84,14 +85,16 @@ all_profiles_df <- all_profiles %>%
   mutate(model = gsub("_.+$", "", model)) %>%
   mutate(cluster = gsub("^.*?_.*?_", "", cluster)) %>%
   mutate(orthogroup = gene_family_id) %>%
-  select(cluster,
-         model,
-         profile_type,
-         orthogroup,
-         signif_level,
-         signif_fdr,
-         coefficient,
-         pval)
+  select(
+    cluster,
+    model,
+    profile_type,
+    orthogroup,
+    signif_level,
+    signif_fdr,
+    coefficient,
+    pval
+  )
 
 # select specific clusters that are the top 10% and only those under the speciation model
 file_path <-
@@ -108,7 +111,7 @@ final_clust_associations <- read.table(
 # Filter based on signif_level and positive coefficient
 cluster_list <- final_clust_associations %>%
   filter(signif_level %in% c("Yes & Top 10% Coef.", "Yes & Top 5% Coef.") &
-           coefficient > 0)
+    coefficient > 0)
 
 speciation_select_clusters <- all_profiles_df %>%
   filter(cluster %in% paste0("cluster_", cluster_list$cluster_id)) %>%
@@ -131,8 +134,9 @@ signf_speciation_select_clusters %>%
 # combine clusters/orthogroups with orthogroups/locus tags
 signf_clusters_orthogroups_annotations <-
   left_join(signf_speciation_select_clusters,
-            orthogroup_annotations,
-            relationship = "many-to-many") # 3414 proteins
+    orthogroup_annotations,
+    relationship = "many-to-many"
+  ) # 3414 proteins
 
 # counts of genes across species
 signf_clusters_orthogroups_counts <-
@@ -292,7 +296,7 @@ filtered_counts <- signf_clusters_orthogroups_counts %>%
 # get list of ticks from the chelicerate metadata used for phylo profiling
 
 chelicerate_metadata <-
-  read_tsv('metadata/chelicerate-species-metadata.txt')
+  read_tsv("metadata/chelicerate-species-metadata.txt")
 
 tick_metadata <- chelicerate_metadata %>%
   filter(str_detect(common_name, "(?i)tick"))
@@ -304,16 +308,16 @@ tick_list <- tick_metadata %>%
 tick_columns <- c("orthogroup", tick_list)
 tick_columns <- tick_columns %>% intersect(names(filtered_counts))
 
-#filter for orthogroups with non-zero counts for at least 6 tick species.
+# filter for orthogroups with non-zero counts for at least 6 tick species.
 filtered_tick_orthogroups_6species <- filtered_counts %>%
   ungroup() %>%
   select(all_of(tick_columns)) %>%
-  mutate(across(-orthogroup, ~ if_else(. > 0, 1, 0))) %>%  # present vs absent just for count purposes
-  mutate(tick_count = rowSums(select(.,-orthogroup))) %>%
+  mutate(across(-orthogroup, ~ if_else(. > 0, 1, 0))) %>% # present vs absent just for count purposes
+  mutate(tick_count = rowSums(select(., -orthogroup))) %>%
   filter(tick_count >= 6) %>%
   pull(orthogroup)
 
-#filter for orthogroups with non-zero counts for at least 6 tick species where there are at least 10 counts across tick species.
+# filter for orthogroups with non-zero counts for at least 6 tick species where there are at least 10 counts across tick species.
 filtered_counts_filtered_6species10counts <- filtered_counts %>%
   filter(orthogroup %in% filtered_tick_orthogroups_6species) %>%
   select(all_of(tick_columns)) %>%
@@ -341,7 +345,7 @@ final_filtered_annotations <- filtered_annotations %>%
 write.table(
   final_filtered_annotations,
   "chelicerate-results/clusters-orthogroups-analysis/filtered-orthogroups-annotations-for-tm-prediction.tsv",
-  sep = '\t',
+  sep = "\t",
   quote = FALSE,
   row.names = FALSE
 )
@@ -349,7 +353,7 @@ write.table(
 write.table(
   amblyomma_clusters_expression,
   "chelicerate-results/clusters-orthogroups-analysis/amblyomma_clusters_expression.tsv",
-  sep = '\t',
+  sep = "\t",
   quote = FALSE,
   row.names = FALSE
 )
@@ -357,7 +361,7 @@ write.table(
 write.table(
   final_filtered_counts,
   "chelicerate-results/clusters-orthogroups-analysis/filtered-orthogroups-counts-for-tm-prediction.tsv",
-  sep = '\t',
+  sep = "\t",
   quote = FALSE,
   row.names = FALSE
 )
@@ -398,7 +402,8 @@ write.table(
 # select proteins in orthogroups with SP predictions, toss out SP+TM or just TM
 transmembrane_predictions <-
   read_tsv("chelicerate-results/deeptmhmm-results/tmpredictions.txt",
-           col_names = FALSE) %>%
+    col_names = FALSE
+  ) %>%
   mutate(locus_tag = X1) %>%
   mutate(tm_prediction = X2) %>%
   select(locus_tag, tm_prediction)
@@ -413,12 +418,12 @@ orthogroup_tmpreds <- filtered_annotations_tm_predictions %>%
   group_by(orthogroup, tm_prediction) %>%
   count()
 
-#Identify orthogroups with "SP+TM" or "TM" in tm_prediction
+# Identify orthogroups with "SP+TM" or "TM" in tm_prediction
 orthogroups_to_exclude <- orthogroup_tmpreds %>%
   filter(tm_prediction %in% c("SP+TM", "TM")) %>%
   pull(orthogroup)
 
-#Filter the original dataframe to exclude these orthogroups
+# Filter the original dataframe to exclude these orthogroups
 # Also filter to remove rows where signif_level=No
 filtered_orthogroup_tmpreds <-
   filtered_annotations_tm_predictions %>%
@@ -443,8 +448,10 @@ expression_values <- rep(NA, nrow(filtered_orthogroup_tmpreds))
 
 # Find the indices where locus_tag is present in amblyomma_clusters_expression
 match_indices <-
-  match(filtered_orthogroup_tmpreds$locus_tag,
-        amblyomma_clusters_expression$locus_tag)
+  match(
+    filtered_orthogroup_tmpreds$locus_tag,
+    amblyomma_clusters_expression$locus_tag
+  )
 
 # Update the expression values at corresponding indices
 expression_values[!is.na(match_indices)] <-
@@ -462,7 +469,7 @@ all_locus_tags <- filtered_orthogroup_tmpreds %>%
 write.table(
   filtered_orthogroup_tmpreds,
   "chelicerate-results/clusters-orthogroups-analysis/final-filtered-SP-orthogroups-annotations.tsv",
-  sep = '\t',
+  sep = "\t",
   quote = FALSE,
   row.names = FALSE
 )
@@ -471,7 +478,7 @@ write.table(
 write.table(
   filtered_tick_SP_proteins_counts,
   "chelicerate-results/clusters-orthogroups-analysis/final-filtered-SP-orthogroups-counts.tsv",
-  sep = '\t',
+  sep = "\t",
   quote = FALSE,
   row.names = FALSE
 )

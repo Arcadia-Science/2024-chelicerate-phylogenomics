@@ -68,17 +68,17 @@ phylo_gls_transform <-
   function(data, tree, include_internal = FALSE) {
     # Obtain the phylogenetic VCV for both species and internal nodes:
     phylo_vcv <- vcvPhylo(tree, anc.nodes = include_internal)
-    
+
     if (include_internal == T) {
       colnames(phylo_vcv) <- c(tree$tip.label, tree$node.label[-1])
       rownames(phylo_vcv) <- c(tree$tip.label, tree$node.label[-1])
-      
+
       # Identify the root node:
       root_node_name <- tree$node.label[1]
       root_node <-
         which(c(tree$tip.label, tree$node.label) == root_node_name)
     }
-    
+
     if (is.list(data)) {
       # Assume data is a list containing s_counts, sl_counts, d_counts, and t_counts
       # Remove the root node from the data:
@@ -108,7 +108,7 @@ phylo_gls_transform <-
         data <- data[, match(tree$tip.label, colnames(data))]
       }
       dim_names <- list(rownames(data), colnames(data))
-      
+
       # Now, obtain the phylogenetic GLS transformed data
       transf_data <-
         t(do.call(cbind, phylo_correction(t(data), phylo_vcv)))
@@ -124,11 +124,11 @@ pairwise_phylo_mahalanobis <-
     # Calculate the inverse of the covariance matrix for calculation of #
     # mahalanobis distances
     iV <- compute_inverse_covariance(transf_data)
-    
+
     # Break generate a list of all possible unique pairwise comparisons,
     # dividing them into chunks of 10000
     pair_chunks <- chunk_pairs(nrow(transf_data), 10000)
-    
+
     # Now, calculate distances for each chunk with Rcpp, parallelizing across
     # chunks and returning a symmetrical distance matrix
     distance_matrix <- process_chunks(pair_chunks, transf_data, iV)
@@ -192,7 +192,8 @@ List phylo_correction(NumericMatrix traits, NumericMatrix phylo_vcv) {
 
   return U;
 }
-')
+'
+)
 
 # A function to calculate the inverse covariance matrix of the phylogenetically
 # transformed data for use in calculation of the mahalanobis distance
@@ -215,24 +216,27 @@ chunk_pairs <- function(n, chunk_size) {
   total_pairs <- combn(1:n, 2)
   num_chunks <- ceiling(ncol(total_pairs) / chunk_size)
   split_cols <-
-    split(1:ncol(total_pairs),
-          rep(1:num_chunks, each = chunk_size, len = ncol(total_pairs)))
-  lapply(split_cols, function(cols)
-    total_pairs[, cols, drop = FALSE])
+    split(
+      1:ncol(total_pairs),
+      rep(1:num_chunks, each = chunk_size, len = ncol(total_pairs))
+    )
+  lapply(split_cols, function(cols) {
+    total_pairs[, cols, drop = FALSE]
+  })
 }
 
 process_chunks <- function(pair_chunks, data, iV) {
   n <- nrow(data)
   distance_matrix <- matrix(NA, n, n)
-  
+
   process_chunk <- function(pair_chunk) {
     chunk_distances <- compute_chunk_distances(data, iV, pair_chunk)
     list(pair_chunk = pair_chunk, distances = chunk_distances)
   }
-  
+
   chunk_results <-
     mclapply(pair_chunks, process_chunk, mc.cores = detectCores())
-  
+
   for (result in chunk_results) {
     pair_chunk <- result$pair_chunk
     distances <- result$distances

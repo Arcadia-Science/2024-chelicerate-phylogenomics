@@ -7,65 +7,65 @@ require(Matrix)
 accent_v2 <-
   c(
     "#5088C5",
-             "#F28360",
-             "#3B9886",
-             "#F7B846",
-             "#7A77AB",
-             "#F898AE",
-             "#C6E7F4",
-             "#F8C5C1",
-             "#B5BEA4",
-             "#F5E4BE",
-             "#DCBFFC",
-             "#F5CBE4"
+    "#F28360",
+    "#3B9886",
+    "#F7B846",
+    "#7A77AB",
+    "#F898AE",
+    "#C6E7F4",
+    "#F8C5C1",
+    "#B5BEA4",
+    "#F5E4BE",
+    "#DCBFFC",
+    "#F5CBE4"
   )
 
 accent_v2_expanded <-
   c(
     "#97CD78",
-             "#73B5E3",
-             "#FFB984",
-             "#BAB0A8",
-             "#C85152",
-             "#8A99AD",
-             "#D1EADF",
-             "#BABEE0",
-             "#F1E8DA",
-             "#DAD3C7",
-             "#DA9085",
-             "#B6C8D4"
+    "#73B5E3",
+    "#FFB984",
+    "#BAB0A8",
+    "#C85152",
+    "#8A99AD",
+    "#D1EADF",
+    "#BABEE0",
+    "#F1E8DA",
+    "#DAD3C7",
+    "#DA9085",
+    "#B6C8D4"
   )
 
 accent_ordered <-
   c(
     "#5088C5",
-             "#F28360",
-             "#F7B846",
-             "#97CD78",
-             "#7A77AB",
-             "#F898AE",
-             "#3B9886",
-             "#C85152",
-             "#73B5E3",
-             "#BAB0A8",
-             "#8A99AD",
-             "#FFB984"
+    "#F28360",
+    "#F7B846",
+    "#97CD78",
+    "#7A77AB",
+    "#F898AE",
+    "#3B9886",
+    "#C85152",
+    "#73B5E3",
+    "#BAB0A8",
+    "#8A99AD",
+    "#FFB984"
   )
 
 light_ordered <-
   c(
     "#C6E7F4",
-             "#F8C5C1",
-             "#F5E4BE",
-             "#B5BEA4",
-             "#DCBFFC",
-             "#B6C8D4",
-             "#DAD3C7",
-             "#DA9085",
-             "#F5CBE4",
-             "#D1EADF",
-             "#BABEE0",
-             "#F1E8DA"
+    "#F8C5C1",
+    "#F5E4BE",
+    "#B5BEA4",
+    "#DCBFFC",
+    "#B6C8D4",
+    "#DAD3C7",
+    "#DA9085",
+    "#F5CBE4",
+    "#D1EADF",
+    "#BABEE0",
+    "#F1E8DA"
   )
 
 accent_all <-
@@ -73,33 +73,33 @@ accent_all <-
 accent_v3 <-
   c(
     "#5088C5",
-             "#C85152",
-             "#F7B846",
-             "#3B9886",
-             "#7A77AB",
-             "#73B5E3",
-             "#F28360",
-             "#FFB984",
-             "#97CD78",
-             "#DCBFFC",
-             "#C6E7F4",
-             "#F898AE",
-             "#F5E4BE",
-             "#D1EADF",
-             "#BABEE0"
+    "#C85152",
+    "#F7B846",
+    "#3B9886",
+    "#7A77AB",
+    "#73B5E3",
+    "#F28360",
+    "#FFB984",
+    "#97CD78",
+    "#DCBFFC",
+    "#C6E7F4",
+    "#F898AE",
+    "#F5E4BE",
+    "#D1EADF",
+    "#BABEE0"
   )
 accent_v4 <-
   c(
     "#5088C5",
-             "#C85152",
-             "#FFB984",
-             "#3B9886",
-             "#7A77AB",
-             "#73B5E3",
-             "#F28360",
-             "#F7B846",
-             "#97CD78",
-             "#DCBFFC"
+    "#C85152",
+    "#FFB984",
+    "#3B9886",
+    "#7A77AB",
+    "#73B5E3",
+    "#F28360",
+    "#F7B846",
+    "#97CD78",
+    "#DCBFFC"
   )
 
 
@@ -122,26 +122,26 @@ arcadia_poppies <- list(
 arcadia_color_discrete <- function(palette, n) {
   # Convert the palette to RGB color space
   rgb_palette <- grDevices::col2rgb(palette)
-  
+
   # Convert RGB to HSV
   hsv_palette <- t(apply(rgb_palette, 2, function(color) {
     grDevices::rgb2hsv(matrix(color, nrow = 3))
   }))
-  
+
   # Hue categories and their corresponding hue values
   hue_sequence <- c(
     "blue",
-          "red-violet",
-          "orange",
-          "yellow-green",
-          "blue-violet",
-          "red",
-          "yellow-orange",
-          "green",
-          "violet",
-          "red-orange",
-          "yellow",
-          "blue-green"
+    "red-violet",
+    "orange",
+    "yellow-green",
+    "blue-violet",
+    "red",
+    "yellow-orange",
+    "green",
+    "violet",
+    "red-orange",
+    "yellow",
+    "blue-green"
   )
   hue_values <- c(
     240 / 360,
@@ -157,16 +157,16 @@ arcadia_color_discrete <- function(palette, n) {
     60 / 360,
     210 / 360
   )
-  
+
   # Categorize colors by hue
   categorize_by_hue <- function(h) {
     differences <- abs(hue_values - h)
     category_index <- which.min(differences)
     hue_sequence[category_index]
   }
-  
+
   hue_categories <- sapply(hsv_palette[, 1], categorize_by_hue)
-  
+
   # Sort colors within each hue category by saturation
   sorted_colors <- c()
   for (hue_cat in hue_sequence) {
@@ -178,19 +178,19 @@ arcadia_color_discrete <- function(palette, n) {
   # Now, create an updated palette that includes the number of unique colors we need
   sorted_colors <- colorRampPalette(sorted_colors)(n)
   sorted_colors <- sorted_colors[-which(sorted_colors %in% palette)]
-  
+
   # Now, we'll loop through, pulling out colors that span the full color space,
   # removing these for the sorted list of colors, and repeating until we have a
   # new, resampled color vector that has sufficient separation between all
   # adjacent colors
-  
+
   # populate this with the starting palette - we definitely want to use these colors first
   final_colors <- palette
-  
+
   while (length(final_colors) < n) {
     # Figure out how many more colors we need to sample
     remaining_indices <- n - length(final_colors)
-    
+
     # Sample at most 6 new colors that span the color space
     if (remaining_indices >= 6) {
       sampled_cols <-
@@ -212,7 +212,7 @@ arcadia_color_discrete <- function(palette, n) {
     # And remove from the vector of sorted colors
     sorted_colors <- sorted_colors[-sampled_cols]
   }
-  
+
   return(final_colors)
 }
 
@@ -221,17 +221,17 @@ arcadia_color_discrete <- function(palette, n) {
 minmax_norm <- function(x) {
   # Save the original positions of NA values
   na_positions <- is.na(x)
-  
+
   # Ignore NA values while calculating min and max
   min_x <- min(x, na.rm = TRUE)
   max_x <- max(x, na.rm = TRUE)
-  
+
   # Normalize x, but ignore NA values
   x <- (x - min_x) / (max_x - min_x)
-  
+
   # Replace the original positions of NA values
   x[na_positions] <- NA
-  
+
   return(x)
 }
 
@@ -243,12 +243,12 @@ minmax_norm <- function(x) {
 convert_to_dgCMatrix <- function(idx, dist) {
   n <- nrow(idx) # Number of vertices
   n_neighbors <- ncol(idx) # Number of neighbors for each vertex
-  
+
   # Prepare the row indices, column indices, and distance values for the sparse matrix
   row_indices <- as.vector(t(idx))
   col_indices <- rep(1:n, each = n_neighbors)
   distance_values <- as.vector(t(dist))
-  
+
   # Create the sparse matrix
   sparse_matrix <-
     sparseMatrix(
@@ -259,6 +259,6 @@ convert_to_dgCMatrix <- function(idx, dist) {
     )
   # Make the matrix symmetric
   sparse_matrix <- (sparse_matrix + t(sparse_matrix)) / 2
-  
+
   return(sparse_matrix)
 }

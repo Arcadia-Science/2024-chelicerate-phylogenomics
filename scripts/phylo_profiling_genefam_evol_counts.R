@@ -36,7 +36,7 @@ get_og_events_per_node <-
     # Read in table of per-species event counts for this gene family
     tmp <- read.table(per_spp_og_events[i], check.names = F)
     colnames(tmp) <- c("node", "s", "sl", "d", "t")
-    
+
     return(tmp)
   }
 
@@ -60,8 +60,10 @@ s_counts <-
     NA,
     nrow = length(gf_node_events),
     ncol = nrow(gf_node_events[[1]]),
-    dimnames = list(names(gf_node_events),
-                    c(gf_node_events[[1]]$node))
+    dimnames = list(
+      names(gf_node_events),
+      c(gf_node_events[[1]]$node)
+    )
   )
 sl_counts <- s_counts
 d_counts <- s_counts
@@ -70,12 +72,12 @@ t_counts <- s_counts
 # Populate these empty count dataframes with the observed counts of each
 # respective event type
 for (i in 1:length(gf_node_events)) {
-  t_dat <- t(gf_node_events[[i]][,-1])
+  t_dat <- t(gf_node_events[[i]][, -1])
   t_dat <- t_dat
-  s_counts[i,] <- log10(t_dat[1,] + 1)
-  sl_counts[i,] <- log10(t_dat[2,] + 1)
-  d_counts[i,] <- log10(t_dat[3,] + 1)
-  t_counts[i,] <- log10(t_dat[4,] + 1)
+  s_counts[i, ] <- log10(t_dat[1, ] + 1)
+  sl_counts[i, ] <- log10(t_dat[2, ] + 1)
+  d_counts[i, ] <- log10(t_dat[3, ] + 1)
+  t_counts[i, ] <- log10(t_dat[4, ] + 1)
 }
 
 # Create a list of these four event count datasets - rather than providing
@@ -83,20 +85,22 @@ for (i in 1:length(gf_node_events)) {
 # individually conduct Cholensky transformations on each dataset to obtain
 # a "phylogenetically corrected" VCV to use in mahalanobis distance calculation
 all_counts <-
-  cbind(s_counts, sl_counts,
-        d_counts, t_counts)
+  cbind(
+    s_counts, sl_counts,
+    d_counts, t_counts
+  )
 
 # Read in the gene family annotations so we can include
 # them in plots
 prot_annots <-
   read_tsv("./metadata/final_genefam_protein_name_protein_name_summary.tsv")
 prot_annots <-
-  prot_annots[which(prot_annots$Orthogroup %in% names(gf_node_events)),]
+  prot_annots[which(prot_annots$Orthogroup %in% names(gf_node_events)), ]
 
 prot_gos <-
   read_tsv("./metadata/final_genefam_go_term_go_id_summary.tsv")
 prot_gos <-
-  prot_gos[which(prot_gos$Orthogroup %in% names(gf_node_events)),]
+  prot_gos[which(prot_gos$Orthogroup %in% names(gf_node_events)), ]
 colnames(prot_gos)[2:3] <- c("best_gos", "second_best_gos")
 
 # Now, go ahead and conduct the phylogenetic profiling, clustering gene families
@@ -167,8 +171,9 @@ all_dists_clusts <-
 # Now, save the constituent results to their respective subdirectories. Again,
 # create these directories if you haven't already done so.
 dir.create("chelicerate-results/plots/",
-           showWarnings = F,
-           recursive = T)
+  showWarnings = F,
+  recursive = T
+)
 dir.create(
   "chelicerate-results/phylo-transformed-profiles/",
   showWarnings = F,
@@ -406,22 +411,27 @@ s_res <- cluster_assoc_test(
   method = "logistic"
 )
 t_res <- cluster_assoc_test(t_dat, t_dists_clusts,
-                            suppressors, nonsuppressors,
-                            method = "logistic")
+  suppressors, nonsuppressors,
+  method = "logistic"
+)
 l_res <- cluster_assoc_test(l_dat, sl_dists_clusts,
-                            suppressors, nonsuppressors,
-                            method = "logistic")
+  suppressors, nonsuppressors,
+  method = "logistic"
+)
 
 # Now do the same, but using the clusters inferred from the full set of event types
 s_comb_res <- cluster_assoc_test(s_dat, all_dists_clusts,
-                                 suppressors, nonsuppressors,
-                                 method = "logistic")
+  suppressors, nonsuppressors,
+  method = "logistic"
+)
 t_comb_res <- cluster_assoc_test(t_dat, all_dists_clusts,
-                                 suppressors, nonsuppressors,
-                                 method = "logistic")
+  suppressors, nonsuppressors,
+  method = "logistic"
+)
 l_comb_res <- cluster_assoc_test(l_dat, all_dists_clusts,
-                                 suppressors, nonsuppressors,
-                                 method = "logistic")
+  suppressors, nonsuppressors,
+  method = "logistic"
+)
 
 # Plot the results for each event type, using the clusters inferred from the
 # same corresponding event types
@@ -435,18 +445,20 @@ s_corr_res <- plot_cluster_traitcorr(
 )
 t_corr_res <-
   plot_cluster_traitcorr(t_res$pvals,
-                         t_res$coefficient,
-                         "transfer",
-                         "transfer",
-                         t_res$clusters,
-                         method = "logistic")
+    t_res$coefficient,
+    "transfer",
+    "transfer",
+    t_res$clusters,
+    method = "logistic"
+  )
 l_corr_res <-
   plot_cluster_traitcorr(l_res$pvals,
-                         l_res$coefficient,
-                         "loss",
-                         "loss",
-                         l_res$clusters,
-                         method = "logistic")
+    l_res$coefficient,
+    "loss",
+    "loss",
+    l_res$clusters,
+    method = "logistic"
+  )
 
 # And do the same for each event type, but using the clusters inferred from
 # the full set of event data
@@ -515,9 +527,10 @@ comb_cls_plt <-
   )
 
 ggsave(comb_cls_plt,
-       height = 12,
-       width = 14,
-       file = "./chelicerate-results/host_detection_suppression_association_results/combined_profile_cluster_host_detection_suppression_associations.pdf")
+  height = 12,
+  width = 14,
+  file = "./chelicerate-results/host_detection_suppression_association_results/combined_profile_cluster_host_detection_suppression_associations.pdf"
+)
 ggsave(
   s_comb_corr_res$correlation_plot,
   height = 6,
@@ -554,9 +567,11 @@ s_counts <-
   matrix(
     NA,
     nrow = length(gf_node_events),
-    ncol = nrow(gf_node_events[[1]][terminal,]),
-    dimnames = list(names(gf_node_events),
-                    gf_node_events[[1]]$node[terminal])
+    ncol = nrow(gf_node_events[[1]][terminal, ]),
+    dimnames = list(
+      names(gf_node_events),
+      gf_node_events[[1]]$node[terminal]
+    )
   )
 sl_counts <- s_counts
 d_counts <- s_counts
@@ -565,26 +580,26 @@ t_counts <- s_counts
 # Populate these empty count dataframes with the observed counts of each
 # respective event type
 for (i in 1:length(gf_node_events)) {
-  t_dat <- t(gf_node_events[[i]][,-1])
-  s_counts[i,] <- t_dat[1, terminal]
-  sl_counts[i,] <- t_dat[2, terminal]
-  d_counts[i,] <- t_dat[3, terminal]
-  t_counts[i,] <- t_dat[4, terminal]
+  t_dat <- t(gf_node_events[[i]][, -1])
+  s_counts[i, ] <- t_dat[1, terminal]
+  sl_counts[i, ] <- t_dat[2, terminal]
+  d_counts[i, ] <- t_dat[3, terminal]
+  t_counts[i, ] <- t_dat[4, terminal]
 }
 
 # Identify which gene families we should do a post-hoc assessment of per-family
 # association with host detection suppression
 post_hoc_clusts <-
   final_clust_associations[which(final_clust_associations$signif_level %in%
-                                   c("Yes & Top 10% Coef.", "Yes & Top 5% Coef.")),]
+    c("Yes & Top 10% Coef.", "Yes & Top 5% Coef.")), ]
 
 # subset by event type
 s_final_clusts <-
-  post_hoc_clusts[which(post_hoc_clusts$profile_type == "speciation"),]
+  post_hoc_clusts[which(post_hoc_clusts$profile_type == "speciation"), ]
 t_final_clusts <-
-  post_hoc_clusts[which(post_hoc_clusts$profile_type == "transfer"),]
+  post_hoc_clusts[which(post_hoc_clusts$profile_type == "transfer"), ]
 l_final_clusts <-
-  post_hoc_clusts[which(post_hoc_clusts$profile_type == "loss"),]
+  post_hoc_clusts[which(post_hoc_clusts$profile_type == "loss"), ]
 
 # Start with speciation
 s_gf_clust_res <-

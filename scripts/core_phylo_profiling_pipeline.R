@@ -32,13 +32,15 @@ source("./scripts/misc_phylo_profiling_functions.R")
 run_phylo_profiling <-
   function(data = NULL,
            tree = NULL,
-           cluster_method = c("none",
-                              "all",
-                              "leiden",
-                              "infomap",
-                              "walktrap-2",
-                              "walktrap-4",
-                              "walktrap-6"),
+           cluster_method = c(
+             "none",
+             "all",
+             "leiden",
+             "infomap",
+             "walktrap-2",
+             "walktrap-4",
+             "walktrap-6"
+           ),
            k = 5,
            distance_metric = "mahalanobis",
            use_anc_nodes = TRUE,
@@ -47,7 +49,7 @@ run_phylo_profiling <-
            seed = 1234) {
     # Set the seed for reproducibility:
     set.seed(seed)
-    
+
     # Set the names/methods of different clustering methods to be accessed
     # later on
     cluster_names <- c(
@@ -57,16 +59,18 @@ run_phylo_profiling <-
       "Walktrap-6 Cluster",
       "Leiden Cluster"
     )
-    cluster_methods <- c("infomap", "walktrap2",
-                         "walktrap4", "walktrap6", "leiden")
-    
+    cluster_methods <- c(
+      "infomap", "walktrap2",
+      "walktrap4", "walktrap6", "leiden"
+    )
+
     # Conduct the phylogenetic GLS transformation, returning the residual trait
     # variation after accounting for and removing the phylogenetic effect
     transf_data <-
       phylo_gls_transform(data, tree, include_internal = use_anc_nodes)
     data <- transf_data
     pcs <- prcomp(transf_data)$x
-    
+
     if (distance_metric == "mahalanobis") {
       # Compute Mahalanobis distances in parallel
       print("Calculating mahalanobis distances using transformed data...")
@@ -80,7 +84,7 @@ run_phylo_profiling <-
       distance_matrix <- as.matrix(dist(pcs))
       umap_dat <- pcs
     }
-    
+
     # If we choose to cluster gene families based on their phylogenetic profiles
     # (the primary utility of this pipeline outside of simply calculating
     # distances among gene families), we then will construct KNN networks,
@@ -96,22 +100,27 @@ run_phylo_profiling <-
       # function call
       nearest_neighbors_umap <-
         dbscan::kNN(as.dist(distance_matrix),
-                    k = 15,
-                    search = "linear")
+          k = 15,
+          search = "linear"
+        )
       sparse_dists_umap <- convert_to_dgCMatrix(
         cbind(
           1:nrow(nearest_neighbors_umap$id),
           nearest_neighbors_umap$id
         ),
-        cbind(rep(
-          1e-10, nrow(nearest_neighbors_umap$dist)
-        ),
-        nearest_neighbors_umap$dist)
+        cbind(
+          rep(
+            1e-10, nrow(nearest_neighbors_umap$dist)
+          ),
+          nearest_neighbors_umap$dist
+        )
       )
       knn_adj_matrix <-
-        convert_to_dgCMatrix(nearest_neighbors_umap$id[, 1:k],
-                             exp(-nearest_neighbors_umap$dist[, 1:k]))
-      
+        convert_to_dgCMatrix(
+          nearest_neighbors_umap$id[, 1:k],
+          exp(-nearest_neighbors_umap$dist[, 1:k])
+        )
+
       # Remove isolated (singleton) components, as this will just pose problems
       # down the line
       n_components <-
@@ -119,16 +128,16 @@ run_phylo_profiling <-
       singletons <-
         which(n_components$membership %in% which(n_components$csize == 1))
       sparse_dists_umap <-
-        sparse_dists_umap[-singletons,-singletons]
-      knn_adj_matrix <- knn_adj_matrix[-singletons,-singletons]
-      distance_matrix <- distance_matrix[-singletons,-singletons]
-      annotations <- annotations[-singletons,]
-      
+        sparse_dists_umap[-singletons, -singletons]
+      knn_adj_matrix <- knn_adj_matrix[-singletons, -singletons]
+      distance_matrix <- distance_matrix[-singletons, -singletons]
+      annotations <- annotations[-singletons, ]
+
       # Construct the igraph network from the adjacency matrix we contructed
       # using the user-specified value of K
       g <-
         igraph::graph_from_adjacency_matrix(knn_adj_matrix, weighted = T, mode = "undirected")
-      
+
       # Now, if clustering was requested while calling the function, go ahead
       # and run the algorithm(s)
       if (cluster_method == "all") {
@@ -197,7 +206,7 @@ run_phylo_profiling <-
         )
         leiden_parts <-
           leiden_parts[[which(leiden_mods == max(leiden_mods))]]
-        
+
         # Plot modularity for each algorithm, so we can better understand their
         # relative performance
         cluster_modularity <-
@@ -218,7 +227,7 @@ run_phylo_profiling <-
           geom_point(size = 3) +
           geom_line(aes(group = 1)) +
           theme_classic(base_size = 16)
-        
+
         # Produce a dataframe of gene family cluster memberships for each algorithm
         cluster_ids <- list(
           "infomap_cluster_id" = infomap_parts$membership,
@@ -227,7 +236,7 @@ run_phylo_profiling <-
           "walktrap6_cluster_id" = walk6_parts$membership,
           "leiden_cluster_id" = leiden_parts$membership
         )
-        
+
         # And order these by performance based on modularity
         cluster_orders <-
           order(cluster_modularity$modularity, decreasing = T)
@@ -235,7 +244,7 @@ run_phylo_profiling <-
         cluster_names <- cluster_names[cluster_orders]
         cluster_ids <- cluster_ids[cluster_orders]
         best_cluster_name <- cluster_names[1]
-        
+
         # and construct a list to contain the full set of network objects
         final_networks <- list(
           infomap = infomap_parts,
@@ -325,15 +334,18 @@ run_phylo_profiling <-
         cluster_ids <- final_networks$membership
         best_cluster_name <- "Leiden Cluster"
       }
-      
+
       print("Obtaining UMAP projections...")
       if (cluster_method == "all") {
         # identify singleton clusters so we can exclude them:
         keep_clusts <-
-          lapply(seq_along(cluster_ids),
-                 function(i)
-                   table(cluster_ids[[i]])[which(table(cluster_ids[[i]]) > 1)])
-        
+          lapply(
+            seq_along(cluster_ids),
+            function(i) {
+              table(cluster_ids[[i]])[which(table(cluster_ids[[i]]) > 1)]
+            }
+          )
+
         # determine plotting colors (for each clustering algorithm) and prepare for plotting:
         cols <- list()
         unique_clusters <- list()
@@ -341,7 +353,7 @@ run_phylo_profiling <-
         for (i in 1:length(cluster_ids)) {
           cols[[i]] <-
             arcadia_color_discrete(accent_v4, length(keep_clusts[[i]]))
-          
+
           names(cols[[i]]) <-
             names(keep_clusts[[i]][order(keep_clusts[[i]], decreasing = T)])
           # Get unique cluster IDs
@@ -358,7 +370,7 @@ run_phylo_profiling <-
         # identify singleton clusters so we can exclude them:
         keep_clusts <-
           table(cluster_ids)[which(table(cluster_ids) > 1)]
-        
+
         # determine plotting colors:
         best_cols <-
           arcadia_color_discrete(accent_v4, length(keep_clusts))
@@ -370,7 +382,7 @@ run_phylo_profiling <-
         color_mappings <- list()
         color_mappings[[1]] <- best_cols
       }
-      
+
       # Based on exploratory use of different approaches, use uwot's
       # t-Distributed UMAP with a slightly higher value for local connectivity
       # (here, using a local neighborhood size of 5)
@@ -382,34 +394,36 @@ run_phylo_profiling <-
           verbose = T
         )
       umap_results_axes <- data.frame(umap_results[, 1:2])
-      
+
       # Combine cluster IDs with the UMAP results
       if (cluster_method == "all") {
         umap_results_axes <-
           cbind(umap_results_axes, do.call(cbind, cluster_ids))
-        umap_results_axes[,-c(1:2)] <-
-          apply(umap_results_axes[,-c(1:2)], 2, as.factor)
+        umap_results_axes[, -c(1:2)] <-
+          apply(umap_results_axes[, -c(1:2)], 2, as.factor)
       } else {
         umap_results_axes <- cbind(umap_results_axes, cluster_ids)
         colnames(umap_results_axes)[3] <-
           paste0(cluster_method, "_cluster_id")
         umap_results_axes[, 3] <- as.factor(umap_results_axes[, 3])
       }
-      
+
       print("Plotting: best-performing algorithm...")
       # Temporarily drop singleton clusters for plotting
       umap_results_axes_final <- umap_results_axes
       keep_clusts <-
         names(table(umap_results_axes[, 3]))[which(table(umap_results_axes[, 3]) > 1)]
       umap_results_axes <-
-        umap_results_axes[which(umap_results_axes[, 3] %in% keep_clusts),]
-      
+        umap_results_axes[which(umap_results_axes[, 3] %in% keep_clusts), ]
+
       # Plot in 2D using the best-performing algorithm
       umap_results_axes$best_cluster_ids <-
         as.factor(as.numeric(umap_results_axes[, 3]))
       umap_plt <-
-        ggplot(umap_results_axes,
-               aes(x = X1, y = X2, fill = best_cluster_ids)) +
+        ggplot(
+          umap_results_axes,
+          aes(x = X1, y = X2, fill = best_cluster_ids)
+        ) +
         scale_fill_manual(values = best_cols) +
         geom_point(
           pch = 21,
@@ -420,18 +434,18 @@ run_phylo_profiling <-
         ) +
         guides(fill = guide_legend(title = element_text(best_cluster_name))) +
         theme_bw()
-      
+
       # And visualize interactively with plotly, labeling by cluster and
       # including provided annotations.
       print("Plotting: best-performing algorithm...")
       # First, combine the annotations with the umap layout/cluster ids
       umap_results_axes_final$protein_name <-
         gsub("\\s*\\([^()]*\\)$", "", annotations[, 2][[1]])
-      
+
       # Return the umap_result_axes back to its original state
       # we'll do this each time we add a new plot to the dropdown
       umap_results_axes <- umap_results_axes_final
-      
+
       # Initialize the plotly object
       umap_pltly <- plot_ly()
       nclusts <- c()
@@ -439,38 +453,40 @@ run_phylo_profiling <-
       for (method_idx in seq_along(cluster_methods)) {
         method <- cluster_methods[method_idx]
         color_map <- color_mappings[[method_idx]]
-        
+
         # Only plot non-singleton clusters:
         clust_freqs <-
           table(umap_results_axes[[paste0(method, "_cluster_id")]])
         keep_clusts <- names(clust_freqs[which(clust_freqs > 5)])
         nclusts[method_idx] <- length(keep_clusts)
         umap_results_axes <-
-          umap_results_axes[which(umap_results_axes[[paste0(method, "_cluster_id")]] %in% keep_clusts),]
-        
+          umap_results_axes[which(umap_results_axes[[paste0(method, "_cluster_id")]] %in% keep_clusts), ]
+
         # Convert cluster IDs to a factor for consistent coloring
         cluster_factor <-
           as.factor(umap_results_axes[[paste0(method, "_cluster_id")]])
         cluster_colors <- color_map[as.character(cluster_factor)]
-        
+
         # Create hover text for each point
         hover_text <-
           paste(
             "Gene Family ID: ",
             rownames(umap_results_axes),
             "<br>",
-            paste0(str_to_title(method), " Cluster ",
-                   umap_results_axes[[paste0(method, "_cluster_id")]]),
+            paste0(
+              str_to_title(method), " Cluster ",
+              umap_results_axes[[paste0(method, "_cluster_id")]]
+            ),
             "<br>",
             paste0("Prot. Name: ", umap_results_axes$protein_name)
           )
-        
+
         # Add a trace for the current method
         umap_pltly <- umap_pltly %>%
           add_trace(
             data = umap_results_axes,
-            x = ~ X1,
-            y = ~ X2,
+            x = ~X1,
+            y = ~X2,
             type = "scatter",
             mode = "markers",
             marker = list(
@@ -488,13 +504,13 @@ run_phylo_profiling <-
           )
         umap_results_axes <- umap_results_axes_final
       }
-      
+
       # Create dropdown menu items to toggle visibility
       visibility_lists <-
         lapply(seq_along(cluster_methods), function(idx) {
           visibility_vector <- rep(FALSE, length(cluster_methods))
           visibility_vector[idx] <- TRUE
-          
+
           list(
             method = "restyle",
             args = list("visible", visibility_vector),
@@ -505,7 +521,7 @@ run_phylo_profiling <-
             )
           )
         })
-      
+
       # Finalize the plot layout
       umap_pltly <- umap_pltly %>%
         layout(
@@ -524,7 +540,7 @@ run_phylo_profiling <-
             )
           )
         )
-      
+
       print("Pipeline finished!")
       return(
         list(
@@ -548,13 +564,15 @@ run_phylo_profiling <-
           verbose = T
         )
       umap_results_axes <- data.frame(umap_results[, 1:2])
-      
+
       umap_plt <-
-        ggplot(umap_results_axes,
-               aes(x = X1, y = X2)) +
+        ggplot(
+          umap_results_axes,
+          aes(x = X1, y = X2)
+        ) +
         geom_point(alpha = 0.5, size = 0.5) +
         theme_bw()
-      
+
       print("Pipeline finished!")
       return(
         list(
