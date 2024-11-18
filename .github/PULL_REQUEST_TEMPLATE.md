@@ -1,4 +1,3 @@
-
 Many thanks for contributing to Arcadia-Science/2024-chelicerate-phylogenomics!
 
 Please fill in the appropriate checklist below (delete whatever is not relevant).
