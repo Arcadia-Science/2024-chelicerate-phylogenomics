@@ -17,11 +17,15 @@ conda activate chelicerate
 
 ## Data
 
-TODO: Add details about the description of input / output data and links to Zenodo depositions, if applicable.
+Some of the data needed to run these scripts is too large for GitHub and has been deposited on [Zenodo](10.5281/zenodo.14113178). This includes:
+- Outputs of the NovelTree run that are used as input into [phylo_profiling_genefam_evol_counts.R](./scripts/phylo_profiling_genefam_evol_counts.R): chelicerata-v1-10062023.zip
+- Chelicerate gene annotations used to do orthogroup filtering in [clusters_orthogroups-analysis.R](./scripts/clusters_orthogroups-analysis.R): annotated.zip 
+- Presence/absence of expression for each transcript in *A. americanum* salivary transcriptome used in [clusters_orthogroups-analysis.R](./scripts/clusters_orthogroups-analysis.R): tx2gene.tsv
+- Chelicerate protein sequences used as input for [clusters_orthogroups-analysis.R](./scripts/clusters_orthogroups-analysis.R)/needed for [deepTMHMM webserver](https://dtu.biolib.com/DeepTMHMM) prediction: 2024-06-24-all-chelicerate-noveltree-proteins.fasta
 
 ## Overview
 
-*add something about how this is actually run*
+The [clusters_orthogroups-analysis.R](./scripts/clusters_orthogroups-analysis.R) script performs the following:
 1. Conduct phylogenetic profiling to identify groups (clusters) of gene families that have very similar patterns of gene duplication, transfer, and loss (gene family evolutionary events)
     - These results are contained within [`chelicerate-results/umap-layout-cluster-ids/*_profile_clusters_annotations.tsv`](./chelicerate-results/umap-layout-cluster-ids/)
         - If you ever want to visualize these profile clusters, there are static plots (pdfs) of the UMAP projections of each gene family, and for each event type, with each gene family/point colored according to their (leiden) cluster ID (e.g. [`speciation_profile_umap_best_clusters.pdf`](chelicerate-results/plots/speciation_profile_umap_best_clusters.pdf))
