@@ -174,16 +174,16 @@ arcadia_color_discrete <- function(palette, n) {
       indices_in_category[order(-hsv_palette[indices_in_category, 2])]
     sorted_colors <- c(sorted_colors, palette[sorted_by_saturation])
   }
-  # Now, create an updated palette that includes the number of unique colors we need
+  # Create an updated palette that includes the number of unique colors we need
   sorted_colors <- colorRampPalette(sorted_colors)(n)
   sorted_colors <- sorted_colors[-which(sorted_colors %in% palette)]
 
-  # Now, we'll loop through, pulling out colors that span the full color space,
+  # Loop through, pulling out colors that span the full color space,
   # removing these for the sorted list of colors, and repeating until we have a
   # new, resampled color vector that has sufficient separation between all
   # adjacent colors
 
-  # populate this with the starting palette - we definitely want to use these colors first
+  # Populate this with the starting palette - we want to use these colors first
   final_colors <- palette
 
   while (length(final_colors) < n) {
@@ -243,7 +243,7 @@ convert_to_dgCMatrix <- function(idx, dist) {
   n <- nrow(idx) # Number of vertices
   n_neighbors <- ncol(idx) # Number of neighbors for each vertex
 
-  # Prepare the row indices, column indices, and distance values for the sparse matrix
+  # Prepare row indices, column indices, & distance values for the sparse matrix
   row_indices <- as.vector(t(idx))
   col_indices <- rep(1:n, each = n_neighbors)
   distance_values <- as.vector(t(dist))

@@ -90,7 +90,8 @@ plot_spp_tree <-
 
     # If plotting the asteroid tree, we need to do some light reformatting of
     # names that were induced through the use of disco to decompose multi-copy
-    # gene family trees (replacement of underscores with hyphens in species names).
+    # gene family trees (replacement of underscores with hyphens in species
+    # names).
     tree$tip.label[order(tree$tip.label)] <-
       samplesheet$species[order(samplesheet$species)]
 
@@ -110,7 +111,8 @@ plot_spp_tree <-
         # read in the bootstrapped trees
         workflow_outdir <- gsub("([^/]*/[^/]*)$", "", tree_fpath)
         bs_trees <-
-          read.newick(paste0(workflow_outdir, "asteroid/asteroid.bsTrees.newick"))
+          read.newick(paste0(workflow_outdir, 
+                             "asteroid/asteroid.bsTrees.newick"))
         tree <- calc_bs_support(bs_trees, tree)
       }
       support_tibble <- tibble(
@@ -436,10 +438,9 @@ get_ofinder_summaries <-
       print(og_gene_hists_plts)
     }
 
-    ###################################################
-    # Now plot the distribution of orthogroups across #
-    # species                                         #
-    ###################################################
+    #########################################################
+    # Now plot the distribution of orthogroups across species
+    #########################################################
     og_spp_counts <-
       read_tsv(
         overall_stats_fpath,
@@ -673,7 +674,8 @@ get_per_spp_ofinder_stats <-
       mrca_out <- getMRCA(tree, tip = outgroup)
       # find the parent of this MRCA node
       parent_node <- which(tree$edge[, 2] == mrca_out)
-      # the parent edge number is the second column value at the corresponding row
+      # The parent edge number is the second column value at the corresponding
+      # row.
       parent_edge_number <- tree$edge[parent_node, 2]
       # root the tree at the parent node
       tree <-
@@ -1117,7 +1119,8 @@ get_tranfer_donor_recips <-
     gf <-
       gsub(".*OG", "OG", spp_tranf_rates_fpaths[i]) %>% gsub("_transfers.txt", "", .)
     # And the species that are in this gene family
-    og_spps <- per_spp_og_counts[which(per_spp_og_counts$Orthogroup == gf), -c(1, (ncol(per_spp_og_counts) - 1):ncol(per_spp_og_counts))]
+    og_spps <- per_spp_og_counts[which(per_spp_og_counts$Orthogroup == gf), 
+                                 -c(1, (ncol(per_spp_og_counts) - 1):ncol(per_spp_og_counts))]
     og_spps <- colnames(og_spps[which(og_spps[1, ] > 0), ])
     # And then the table of recipient-donor events
     # But only if transfer events were inferred
@@ -1126,11 +1129,13 @@ get_tranfer_donor_recips <-
       donor_spps <- og_spps[which(og_spps %in% tmp$V1)]
       donors <- summary(as.factor(tmp$V1))
       donors <-
-        data.frame(as.list(donors[which(names(donors) %in% species)]), check.names = F)
+        data.frame(as.list(donors[which(names(donors) %in% species)]), 
+                   check.names = F)
       recip_spps <- og_spps[which(og_spps %in% tmp$V2)]
       recips <- summary(as.factor(tmp$V2))
       recips <-
-        data.frame(as.list(recips[which(names(recips) %in% species)]), check.names = F)
+        data.frame(as.list(recips[which(names(recips) %in% species)]),
+                   check.names = F)
 
       # And only if the transfer events occurred between tips
       # Make sure species included in the gene family have integer
@@ -1245,7 +1250,8 @@ summarize_generax_per_family <-
            nparallel = detectCores() - 1) {
     generax_dir <- paste0(results_dir, "generax/per_family_rates")
 
-    # Get lists of files for each sort of analysis/output from generax that we"ll be summarizing
+    # Get lists of files for each sort of analysis/output from generax that
+    # we'll be summarizing
     per_og_events <-
       list.files(
         full.names = TRUE,
@@ -1360,8 +1366,8 @@ summarize_generax_per_family <-
     # Clean up the large interim list
     rm(per_spp_events)
 
-    # Now, focusing on transfers - get a summed matrix of transfers among species,
-    # with donors along the x-axis, and recipients along the y.
+    # Now, focusing on transfers - get a summed matrix of transfers among
+    # species, with donors along the x-axis, and recipients along the y.
     # y-axis: recipient, x-axis: donor
     message("Summarizing gene transfer recipient events.")
     transf_res <-
@@ -1485,7 +1491,8 @@ summarize_generax_per_species <-
            nparallel = detectCores() - 1) {
     generax_dir <- paste0(results_dir, "generax/per_species_rates")
 
-    # Get lists of files for each sort of analysis/output from generax that we"ll be summarizing
+    # Get lists of files for each sort of analysis/output from generax that
+    # we'll be summarizing
     per_og_events <-
       list.files(
         full.names = TRUE,
@@ -1598,8 +1605,8 @@ summarize_generax_per_species <-
     # Clean up the large interim list
     rm(per_spp_events)
 
-    # Now, focusing on transfers - get a summed matrix of transfers among species,
-    # with donors along the x-axis, and recipients along the y.
+    # Now, focusing on transfers - get a summed matrix of transfers among
+    # species, with donors along the x-axis, and recipients along the y.
     # y-axis: recipient, x-axis: donor
     message("Summarizing gene transfer recipient events.")
     transf_res <-
@@ -1716,7 +1723,8 @@ summarize_generax_per_species <-
     return(results)
   }
 
-# This function will return the node number given the node name and a phylogenetic tree
+# This function will return the node number given the node name and a
+# phylogenetic tree
 update_node_names <- function(species_rates = NULL,
                               tree = NULL) {
   # Get the names of internal nodes from speciesrax
@@ -1730,12 +1738,14 @@ update_node_names <- function(species_rates = NULL,
     nodelabs <- gsub(tiplabs[i], tree$tip.label[i], nodelabs)
   }
 
-  # Now identify the node number that corresponds to each of GeneRax's named nodes
+  # Now identify the node number that corresponds to each of GeneRax's named
+  # nodes
   for (node_name in nodelabs) {
     # Now split the string on underscores to get the taxa names
     taxa <- unlist(strsplit(node_name, "_"))[2:3]
 
-    # Find the node number (MRCA) corresponding to the taxa in the original node name
+    # Find the node number (MRCA) corresponding to the taxa in the original node
+    # name
     nodelabs[which(nodelabs == node_name)] <-
       getMRCA(tree, match(taxa, tree$tip.label))
   }

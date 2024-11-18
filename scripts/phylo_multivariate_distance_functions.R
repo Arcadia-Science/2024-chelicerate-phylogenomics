@@ -89,7 +89,8 @@ phylo_gls_transform <-
           data[[i]][, -which(colnames(data[[i]]) == root_node_name)]
         # Ensure the data matches the order of the species tree
         data[[i]] <-
-          data[[i]][, match(c(tree$tip.label, tree$node.label[-1]), colnames(data[[i]]))]
+          data[[i]][, match(c(tree$tip.label, tree$node.label[-1]),
+                            colnames(data[[i]]))]
         dim_names <- list(rownames(data[[i]]), colnames(data[[i]]))
         transf_data[[i]] <-
           t(do.call(cbind, phylo_correction(t(data[[i]]), phylo_vcv)))
@@ -154,7 +155,8 @@ List phylo_correction(NumericMatrix traits, NumericMatrix phylo_vcv) {
   // Get the phylogenetic variance-covariance matrix
   arma::mat Gmatrix = as<arma::mat>(phylo_vcv);
 
-  // Compute the Cholesky decomposition of the inverse of the Phylogenetic VCV (Gmatrix)
+  // Compute the Cholesky decomposition of the inverse of the Phylogenetic VCV
+  // (Gmatrix)
   arma::mat correction_factor;
   try {
     correction_factor = arma::chol(arma::inv(Gmatrix));

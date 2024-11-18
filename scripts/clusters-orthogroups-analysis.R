@@ -4,17 +4,19 @@ library(tidyverse)
 # Organize files from trait association analysis, NovelTree run, and annotations
 ######################################
 
-# load in orthogroups TSV
-# links for each orthogroup the locus tag of protein belonging in that orthogroup
-# downloaded NovelTree results- available on Zenodo
-# resulting orthogroups file from NovelTree analysis
+# Load in orthogroups TSV
+# * links for each orthogroup the locus tag of protein belonging in that
+#   orthogroup
+# * downloaded NovelTree results - available on Zenodo
+# * resulting orthogroups file from NovelTree analysis
 
 orthogroups <-
   read_tsv(
     "chelicerata-v1-10062023/orthofinder/complete_dataset/Results_Inflation_1.5/Orthogroups/Orthogroups.tsv"
   )
 
-# pivot longer and separate rows in locus tag by "," so each row is a single entry for a locus tag to then combine with annotation information
+# pivot longer and separate rows in locus tag by "," so each row is a single
+# entry for a locus tag to then combine with annotation information
 orthogroups_long <- orthogroups %>%
   pivot_longer(!Orthogroup, names_to = "species", values_to = "locus_tag") %>%
   drop_na()
@@ -24,8 +26,9 @@ orthogroups_separated <- orthogroups_long %>%
   mutate(orthogroup = Orthogroup) %>%
   select(orthogroup, species, locus_tag)
 
-# annotation files. too big for github. update the path below to wherever you have stored these files.
-# downloaded from Zenodo (annotated/)
+# Annotation files are too big for github.
+# Update the path below to wherever you have stored these files.
+# Downloaded from Zenodo (annotated/)
 
 annotation_directory <- "./annotated"
 annotation_files <-
@@ -59,9 +62,12 @@ orthogroup_annotations <-
   left_join(orthogroups_separated, annotations_df) %>%
   select(-species_name)
 
-# cluster results
-# read in all cluster results for each noveltree model - speciation, transfer, loss, in subdirectories
-# these files come from the host_detection_suppression_association directory, where significant clusters of gene families were identified based on different models
+# Cluster results
+# Read in all cluster results for each noveltree model -
+# speciation, transfer, loss, in subdirectories.
+# These files come from the host_detection_suppression_association directory,
+# where significant clusters of gene families were identified based on different
+# models
 profile_clusters_dir <-
   "./chelicerate-results/host_detection_suppression_association_results/combined_profile_clusters"
 
@@ -75,12 +81,17 @@ profile_files <-
 
 all_profiles <- map_df(profile_files, function(file_name) {
   read_tsv(file_name) %>%
-    mutate(filename = paste(basename(dirname(file_name)), basename(file_name), sep = "_"))
+    mutate(filename = paste(basename(dirname(file_name)), 
+                            basename(file_name), 
+                            sep = "_"))
 })
 
-# model comes from the filename, bug where "speciation" is carried through for profile_type for all files but is incorrect
+# Model comes from the filename, bug where "speciation" is carried through for
+# profile_type for all files but is incorrect
 all_profiles_df <- all_profiles %>%
-  mutate(cluster = gsub("_per_family_correlation_results.tsv", "", filename)) %>%
+  mutate(cluster = gsub("_per_family_correlation_results.tsv", 
+                        "",
+                        filename)) %>%
   mutate(model = cluster) %>%
   mutate(model = gsub("_.+$", "", model)) %>%
   mutate(cluster = gsub("^.*?_.*?_", "", cluster)) %>%
@@ -96,7 +107,8 @@ all_profiles_df <- all_profiles %>%
     pval
   )
 
-# select specific clusters that are the top 10% and only those under the speciation model
+# Select specific clusters that are the top 10% and only those under the
+# speciation model
 file_path <-
   "chelicerate-results/host_detection_suppression_association_results/combined_profile_cluster_host_detection_suppression_associations.tsv"
 
@@ -120,16 +132,18 @@ speciation_select_clusters <- all_profiles_df %>%
 speciation_select_clusters %>%
   select(orthogroup) %>%
   unique() %>%
-  count() # 718 orthogroups from the top 10% clusters that are positively predictive for host detection suppression under the speciation model
+  count() # 718 orthogroups from the top 10% clusters that are positively
+# predictive for host detection suppression under the speciation model
 
-# filter for significant clusters, which meets pval < 0.05
+# Filter for significant clusters, which meets pval < 0.05
 signf_speciation_select_clusters <- speciation_select_clusters %>%
   filter(signif_level != "No")
 
 signf_speciation_select_clusters %>%
   select(orthogroup) %>%
   unique() %>%
-  count() # 76 orthogroups that are significantly, positively associated with host detection suppression
+  count() # 76 orthogroups that are significantly, positively associated with
+# host detection suppression
 
 # combine clusters/orthogroups with orthogroups/locus tags
 signf_clusters_orthogroups_annotations <-
@@ -151,12 +165,14 @@ amblyomma_signf_clusters_orthogroups <-
   signf_clusters_orthogroups_annotations %>%
   filter(species == "Amblyomma-americanum")
 
-# write out main files
-# only writing out files for the filtered down sets of orthogroups/proteins that are within the top 10% clusters, are positively and significantly associated with host detection suppression under the speciation model
-# annotation table
+# Write out main files.
+# Only writing out files for the filtered down sets of orthogroups/proteins that
+# are within the top 10% clusters, are positively and significantly associated
+# with host detection suppression under the speciation model.
+
+# Annotation table
 output_path <- "chelicerate-results/clusters-orthogroups-analysis"
 
-# Create the directory if it doesn't exist
 if (!dir.exists(output_path)) {
   dir.create(output_path, recursive = TRUE)
 }
@@ -169,7 +185,7 @@ write.table(
   row.names = FALSE
 )
 
-# counts table
+# Counts table
 write.table(
   signf_clusters_orthogroups_counts,
   "chelicerate-results/clusters-orthogroups-analysis/top-positive-significant-clusters-orthogroups-counts.tsv",
@@ -178,7 +194,8 @@ write.table(
   row.names = FALSE
 )
 
-# amblyomma cluster genes, also filtered for positive coefficient and speciation model
+# Amblyomma cluster genes, also filtered for positive coefficient and speciation
+# model.
 write.table(
   amblyomma_signf_clusters_orthogroups,
   "chelicerate-results/clusters-orthogroups-analysis/top-positive-significant-amblyomma-clusters-orthogroups.tsv",
@@ -188,11 +205,13 @@ write.table(
 )
 
 ######################################
-# Filter down clusters based on %s of secreted proteins, those that are expressed in Amblyomma salivary transcriptome
+# Filter down clusters based on %s of secreted proteins, those that are
+# expressed in Amblyomma salivary transcriptome
 ######################################
 
-# breakdown of % of proteins that are secreted in each orthogroup
-# filter to get orthogroups where at least 50% of the proteins in that group are predicted to have signal peptides by deepsig
+# Breakdown of % of proteins that are secreted in each orthogroup.
+# Filter to get orthogroups where at least 50% of the proteins in that group are
+# predicted to have signal peptides by deepsig
 
 majority_secreted_orthogroups <-
   signf_clusters_orthogroups_annotations %>%
@@ -210,9 +229,10 @@ majority_secreted_orthogroups_list <-
   majority_secreted_orthogroups %>%
   pull(orthogroup) # 14 orthogroups after secretion filter
 
-# expressed amblyomma proteins in orthogroups
-# per orthogroup, get number of Amblyomma genes in that orthogroup
-# filter by expression = 1, percentage over total genes in orthogroup to get number that is expressed or "present" in the Isoseq salivary transcriptome
+# Expressed amblyomma proteins in orthogroups
+# Per orthogroup, get number of Amblyomma genes in that orthogroup
+# filter by expression = 1, percentage over total genes in orthogroup to get
+# number that is expressed or "present" in the Isoseq salivary transcriptome
 
 # namemap of Isoseq reads to transcripts
 isoseq_namemap <-
@@ -224,7 +244,7 @@ transcript_mapping <-
     col.names = c("transcript", "presence")
   )
 
-# filtered transcript mapping to only those with present genes
+# Filtered transcript mapping to only those with present genes
 transcript_mapping_present <- transcript_mapping %>%
   filter(presence != "-1") %>%
   mutate(presence = gsub(".TU", "", presence)) %>%
@@ -291,7 +311,8 @@ filtered_annotations <- signf_clusters_orthogroups_annotations %>%
 filtered_counts <- signf_clusters_orthogroups_counts %>%
   filter(orthogroup %in% filtered_orthogroups_list)
 
-# further filter for groups that have at least 10 total counts across 6 or more tick species
+# Further filter for groups that have at least 10 total counts across 6 or more
+# tick species.
 # get list of ticks from the chelicerate metadata used for phylo profiling
 
 chelicerate_metadata <-
@@ -311,12 +332,13 @@ tick_columns <- tick_columns %>% intersect(names(filtered_counts))
 filtered_tick_orthogroups_6species <- filtered_counts %>%
   ungroup() %>%
   select(all_of(tick_columns)) %>%
-  mutate(across(-orthogroup, ~ if_else(. > 0, 1, 0))) %>% # present vs absent just for count purposes
+  mutate(across(-orthogroup, ~ if_else(. > 0, 1, 0))) %>% # present vs absent
   mutate(tick_count = rowSums(select(., -orthogroup))) %>%
   filter(tick_count >= 6) %>%
   pull(orthogroup)
 
-# filter for orthogroups with non-zero counts for at least 6 tick species where there are at least 10 counts across tick species.
+# filter for orthogroups with non-zero counts for at least 6 tick species where
+# there are at least 10 counts across tick species.
 filtered_counts_filtered_6species10counts <- filtered_counts %>%
   filter(orthogroup %in% filtered_tick_orthogroups_6species) %>%
   select(all_of(tick_columns)) %>%
@@ -328,7 +350,10 @@ filtered_counts_filtered_6species10counts <- filtered_counts %>%
 species6counts10orthogroups_list <-
   unique(filtered_counts_filtered_6species10counts$orthogroup)
 
-# filtered dataframes based on 50% of proteins in orthogroup are secreted, have to have an Amblyomma representative and 25% expressed in salivary transcriptome, and orthogroup has non-zero counts for at least 6 tick species where there are at least 10 counts across tick species
+# Filtered dataframes based on 50% of proteins in orthogroup are secreted, have
+# to have an Amblyomma representative and 25% expressed in salivary
+# transcriptome, and orthogroup has non-zero counts for at least 6 tick species
+# where there are at least 10 counts across tick species.
 
 final_filtered_counts <- filtered_counts %>%
   filter(orthogroup %in% species6counts10orthogroups_list)
@@ -390,12 +415,24 @@ write.table(
 
 ######################################
 # The next 3 steps were done outside of this R script:
-# Set of concatenated proteins from all chelicerate species pulled from those that were directly input to the NovelTree run
-# 1. pulled out protein seqs with this command/script: python3 ./scripts/grab_proteins_from_locus_tags.py 2024-06-24-all-chelicerate-noveltree-proteins.fasta ./metadata/filtered-host-detection-association-protein-locus-tags-for-tm-prediction.txt ./chelicerate-results/deeptmhmm-results/filtered-proteins-for-tm-prediction.fasta
-# 2024-06-24-all-chelicerate-noveltree-proteins.fasta is available on Zenodo.
-# 2. transmembrane domain predictions from deepTMHMM tool with chelicerate-results/deeptmhmm-results/2024-06-26-filtered-proteins-for-tm-prediction.fasta on this webserver https://dtu.biolib.com/DeepTMHMM
-# 3. downloaded results from webserver and used this command to make table: awk -F'\\| ' '/^>/{gsub(/^>/, "", $1); print $1 "\t" $2}' chelicerate-results/deeptmhmm-results/predicted_topologies.3line > chelicerate-results/deeptmhmm-results/tmpredictions.txt
-# 4. We only had proteins left that had just a SP prediction, no TM or TM+SP, but the code below would remove them if needed.
+# Set of concatenated proteins from all chelicerate species pulled from those
+# that were directly input to the NovelTree run
+# 1. pulled out protein seqs with this command/script: 
+# python3 ./scripts/grab_proteins_from_locus_tags.py \
+#   2024-06-24-all-chelicerate-noveltree-proteins.fasta \
+#   ./metadata/filtered-host-detection-association-protein-locus-tags-for-tm-prediction.txt
+#   ./chelicerate-results/deeptmhmm-results/filtered-proteins-for-tm-prediction.fasta
+# The FASTA file 2024-06-24-all-chelicerate-noveltree-proteins.fasta is
+# available on Zenodo.
+# 2. Transmembrane domain predictions from deepTMHMM tool with
+# chelicerate-results/deeptmhmm-results/2024-06-26-filtered-proteins-for-tm-prediction.fasta
+# on this webserver https://dtu.biolib.com/DeepTMHMM
+# 3. Downloaded results from webserver and used this command to make table:
+# awk -F'\\| ' '/^>/{gsub(/^>/, "", $1); print $1 "\t" $2}' \
+# chelicerate-results/deeptmhmm-results/predicted_topologies.3line > \
+# chelicerate-results/deeptmhmm-results/tmpredictions.txt
+# 4. We only had proteins left that had just a SP prediction, no TM or TM+SP,
+# but the code below would remove them if needed.
 ######################################
 
 # select proteins in orthogroups with SP predictions, toss out SP+TM or just TM
@@ -441,7 +478,8 @@ filtered_annotations_tm_predictions %>%
   select(orthogroup, locus_tag) %>%
   count() # 10 orthogroups with 275 proteins to select candidates from
 
-# merge expression data into filtered_orthogroup_tmpreds for use in candidate selection
+# Merge expression data into filtered_orthogroup_tmpreds for use in candidate
+# selection.
 # Create a vector to store the expression values
 expression_values <- rep(NA, nrow(filtered_orthogroup_tmpreds))
 

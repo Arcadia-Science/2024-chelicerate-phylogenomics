@@ -1,5 +1,4 @@
 # clustering gene families based on per-species/node event counts
-setwd("./2024-chelicerate-phylogenomics/")
 source("./scripts/noveltree-summary-functions.R")
 source("./scripts/core_phylo_profiling_pipeline.R")
 source("./scripts/profile_cluster_trait_association_functions.R")
@@ -36,7 +35,7 @@ get_og_events_per_node <-
     # Read in table of per-species event counts for this gene family
     tmp <- read.table(per_spp_og_events[i], check.names = F)
     colnames(tmp) <- c("node", "s", "sl", "d", "t")
-
+    
     return(tmp)
   }
 
@@ -171,8 +170,8 @@ all_dists_clusts <-
 # Now, save the constituent results to their respective subdirectories. Again,
 # create these directories if you haven't already done so.
 dir.create("chelicerate-results/plots/",
-  showWarnings = F,
-  recursive = T
+           showWarnings = F,
+           recursive = T
 )
 dir.create(
   "chelicerate-results/phylo-transformed-profiles/",
@@ -244,7 +243,8 @@ htmlwidgets::saveWidget(
 )
 
 # Save out the phylogenetic GLS transformed profiles
-# Don't worry about saving out the transformed data from the combined analysis - these are already contained in the other outputs
+# Don't worry about saving out the transformed data from the combined analysis -
+# these are already contained in the other outputs
 write.table(
   s_dists_clusts$phylo_corrected_data,
   file = "chelicerate-results/phylo-transformed-profiles/speciation_phylo_gls_transformed_profiles.tsv",
@@ -278,8 +278,9 @@ write.table(
   row.names = TRUE
 )
 
-# And lastly, save out to file the umap layout that includes cluster IDs as well as protein annotations.
-# Before we do so, go ahead and combine the gene ontology annotations with these.
+# And lastly, save out to file the umap layout that includes cluster IDs as well
+# as protein annotations. Before we do so, go ahead and combine the gene
+# ontology annotations with these.
 s_dists_clusts$umap_clusters <-
   cbind(s_dists_clusts$umap_clusters, prot_gos[which(prot_gos$Orthogroup %in% rownames(s_dists_clusts$umap_clusters)), 2:3])
 d_dists_clusts$umap_clusters <-
@@ -344,8 +345,8 @@ write.table(
 # 3) Summarize across states, obtaining mean event counts for species in state
 #    1 or 0 for detection suppression.
 # 4) Then, for each cluster, conduct non-parametric tests to determine whether
-#    detection-suppressing species have significantly different (or greater) event
-#    counts than non-detection suppressing species
+#    detection-suppressing species have significantly different (or greater)
+#    event counts than non-detection suppressing species
 
 # Start by obtaining the transformed data for tips. Keep only the data for
 # terminal branches:
@@ -411,26 +412,26 @@ s_res <- cluster_assoc_test(
   method = "logistic"
 )
 t_res <- cluster_assoc_test(t_dat, t_dists_clusts,
-  suppressors, nonsuppressors,
-  method = "logistic"
+                            suppressors, nonsuppressors,
+                            method = "logistic"
 )
 l_res <- cluster_assoc_test(l_dat, sl_dists_clusts,
-  suppressors, nonsuppressors,
-  method = "logistic"
+                            suppressors, nonsuppressors,
+                            method = "logistic"
 )
 
 # Now do the same, but using the clusters inferred from the full set of event types
 s_comb_res <- cluster_assoc_test(s_dat, all_dists_clusts,
-  suppressors, nonsuppressors,
-  method = "logistic"
+                                 suppressors, nonsuppressors,
+                                 method = "logistic"
 )
 t_comb_res <- cluster_assoc_test(t_dat, all_dists_clusts,
-  suppressors, nonsuppressors,
-  method = "logistic"
+                                 suppressors, nonsuppressors,
+                                 method = "logistic"
 )
 l_comb_res <- cluster_assoc_test(l_dat, all_dists_clusts,
-  suppressors, nonsuppressors,
-  method = "logistic"
+                                 suppressors, nonsuppressors,
+                                 method = "logistic"
 )
 
 # Plot the results for each event type, using the clusters inferred from the
@@ -445,19 +446,19 @@ s_corr_res <- plot_cluster_traitcorr(
 )
 t_corr_res <-
   plot_cluster_traitcorr(t_res$pvals,
-    t_res$coefficient,
-    "transfer",
-    "transfer",
-    t_res$clusters,
-    method = "logistic"
+                         t_res$coefficient,
+                         "transfer",
+                         "transfer",
+                         t_res$clusters,
+                         method = "logistic"
   )
 l_corr_res <-
   plot_cluster_traitcorr(l_res$pvals,
-    l_res$coefficient,
-    "loss",
-    "loss",
-    l_res$clusters,
-    method = "logistic"
+                         l_res$coefficient,
+                         "loss",
+                         "loss",
+                         l_res$clusters,
+                         method = "logistic"
   )
 
 # And do the same for each event type, but using the clusters inferred from
@@ -527,9 +528,9 @@ comb_cls_plt <-
   )
 
 ggsave(comb_cls_plt,
-  height = 12,
-  width = 14,
-  file = "./chelicerate-results/host_detection_suppression_association_results/combined_profile_cluster_host_detection_suppression_associations.pdf"
+       height = 12,
+       width = 14,
+       file = "./chelicerate-results/host_detection_suppression_association_results/combined_profile_cluster_host_detection_suppression_associations.pdf"
 )
 ggsave(
   s_comb_corr_res$correlation_plot,
@@ -591,7 +592,7 @@ for (i in 1:length(gf_node_events)) {
 # association with host detection suppression
 post_hoc_clusts <-
   final_clust_associations[which(final_clust_associations$signif_level %in%
-    c("Yes & Top 10% Coef.", "Yes & Top 5% Coef.")), ]
+                                   c("Yes & Top 10% Coef.", "Yes & Top 5% Coef.")), ]
 
 # subset by event type
 s_final_clusts <-
