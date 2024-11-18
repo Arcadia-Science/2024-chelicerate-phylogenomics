@@ -326,7 +326,6 @@ species6counts10orthogroups_list <-
   unique(filtered_counts_filtered_6species10counts$orthogroup)
 
 # filtered dataframes based on 50% of proteins in orthogroup are secreted, have to have an Amblyomma representative and 25% expressed in salivary transcriptome, and orthogroup has non-zero counts for at least 6 tick species where there are at least 10 counts across tick species
-# 9 orthogroups remaining
 
 final_filtered_counts <- filtered_counts %>%
   filter(orthogroup %in% species6counts10orthogroups_list)
