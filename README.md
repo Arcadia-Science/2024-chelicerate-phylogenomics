@@ -45,7 +45,7 @@ This repository contains R scripts which can be run in Rstudio, which can be ins
 open -a Rstudio
 ```
 
-You can now move on to running the necessary [scripts](scripts) as described below.
+You can now move on to running the necessary [scripts](scripts) as described below. Make sure your working directory is set to this repo when in Rstudio.
 
 ## Data
 
