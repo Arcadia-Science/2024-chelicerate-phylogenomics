@@ -14,11 +14,38 @@ This repository uses conda to manage software environments and installations. Yo
 mamba env create -n chelicerate --file envs/dev.yml
 conda activate chelicerate
 ```
+The `phyr` package is not available through conda but is required by this repo. To install the package, run the following from within your activated environment to open R:
+
+```{bash}
+R
+```
+Once you are in an R session, run the following:
+
+```{bash}
+# Install remotes if not already installed
+if (!requireNamespace("remotes", quietly = TRUE)) {
+    install.packages("remotes")
+}
+
+# Set repositories
+options(repos = c(
+  phyr = 'https://daijiang.r-universe.dev',
+  CRAN = 'https://cloud.r-project.org'
+))
+
+# Install specific version of phyr
+remotes::install_version("phyr", version = "1.1.2", repos = "https://daijiang.r-universe.dev")
+```
+
+Quit the R session by running `quit()` and then enter `n` to not save the workspace.
+
 This repository contains R scripts which can be run in Rstudio, which can be installed following the instructions [here](https://posit.co/download/rstudio-desktop/). Once Rstudio is installed, run the following from command line to open Rstudio from your activated conda environment:
 
 ```{bash}
 open -a Rstudio
 ```
+
+You can now move on to running the necessary [scripts](scripts) as described below.
 
 ## Data
 
