@@ -25,3 +25,5 @@ dependencies:
   - r-matrix=1.6_5
   - r-jpeg=0.1_10
   - r-latticeextra=0.6_30
+  - r-gridExtra=2.3
+  - r-mvtnorm=1.3_2
