@@ -4,7 +4,9 @@
 
 ## Purpose
 
-We used phylogenomics to investigate patterns of gene family evolution across ticks and other chelicerates, which include a diverse array of parasites. We used phylogenetic profiling and trait-association tests to predict gene families that may enable parasitic species to feed on hosts undetected for prolonged periods (>1 day). This repository contains the scripts used to generate phylogenetic profiles for each gene family using the outputs of [NovelTree](https://doi.org/10.57844/arcadia-9602-3351), cluster families by profile similarity, and identify clusters that predict suppression of host detection.
+We used phylogenomics to investigate patterns of gene family evolution across ticks and other chelicerates, which include a diverse array of parasites and non-parasites.
+We used phylogenetic profiling and trait-association tests to predict gene families that may enable parasitic species to feed on hosts undetected for prolonged periods (>1 day).
+This repository contains the scripts used to generate phylogenetic profiles for each gene family using the outputs of [NovelTree](https://doi.org/10.57844/arcadia-9602-3351), cluster families by profile similarity, and identify clusters that predict suppression of host detection.
 
 These methods are in active development. We welcome comments/questions/feedback/issues!
 
