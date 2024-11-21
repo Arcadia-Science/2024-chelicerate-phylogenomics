@@ -6,6 +6,8 @@
 
 We used phylogenomics to investigate patterns of gene family evolution across ticks and other chelicerates, which include a diverse array of parasites. We used phylogenetic profiling and trait-association tests to predict gene families that may enable parasitic species to feed on hosts undetected for prolonged periods (>1 day). This repository contains the scripts used to generate phylogenetic profiles for each gene family using the outputs of [NovelTree](https://doi.org/10.57844/arcadia-9602-3351), cluster families by profile similarity, and identify clusters that predict suppression of host detection.
 
+These methods are in active development. We welcome comments/questions/feedback/issues!
+
 ## Installation and Setup
 
 This repository uses conda to manage software environments and installations. You can find operating system-specific instructions for installing miniconda [here](https://docs.conda.io/projects/miniconda/en/latest/). After installing conda and [mamba](https://mamba.readthedocs.io/en/latest/), run the following command to create the pipeline run environment.
