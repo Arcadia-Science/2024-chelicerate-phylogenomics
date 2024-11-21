@@ -33,9 +33,9 @@ Some of the data needed to run these scripts is too large for GitHub and has bee
 - Chelicerate protein sequences used as input in [02_clusters-orthogroups-analysis.R](scripts/02_clusters-orthogroups-analysis.R) and needed for [deepTMHMM webserver](https://dtu.biolib.com/DeepTMHMM) prediction: `2024-06-24-all-chelicerate-noveltree-proteins.fasta`
 
 ## Overview
-#### To run the analysis, you will need to run two Rscripts. The other [scripts](scripts/) contain functions that are called internally by these two main scripts.
+### To run the analysis, you will need to run two Rscripts. The other [scripts](scripts/) contain functions that are called internally by these two main scripts.
 
-### Step 1: Use the [`01_phylo_profiling_genefam_evol_counts.R`](scripts/01_phylo_profiling_genefam_evol_counts.R) script to perform the following:
+#### Step 1: Use the [`01_phylo_profiling_genefam_evol_counts.R`](scripts/01_phylo_profiling_genefam_evol_counts.R) script to perform the following:
 
 1. Conduct phylogenetic profiling to identify groups (clusters) of gene families that have very similar patterns of gene duplication, transfer, and loss (gene family evolutionary events)
     - These results are contained within [`chelicerate-results/umap-layout-cluster-ids/*_profile_clusters_annotations.tsv`](chelicerate-results/umap-layout-cluster-ids/)
@@ -54,7 +54,7 @@ Some of the data needed to run these scripts is too large for GitHub and has bee
         - Because the statistical tests were conducted on each individual event type, you’d actually need to look at the corresponding table to pull out those IDs (e.g. [`speciation_profile_cluster_host_detection_suppression_annotations.tsv`](chelicerate-results/umap-layout-cluster-ids/speciation_profile_clusters_annotations.tsv))
     - Regardless, for now it's best to focus on the `leiden_cluster_id`, since these are the clusters the statistical tests were conducted on.
 
-#### A few quick notes on interpretation:
+##### A few quick notes on interpretation:
 1. "Speciations" in the context of gene family evolution captures multiple features of gene family evolution and is closely tied to gene copy number - it thus is a correlate of the other event types - gene duplication, transfer, and loss.
     - For instance, increasing gene duplication increases the observed number of speciation events, whereas elevated rates of gene loss will decrease the number of speciation events.
     - For these reasons, it is very information rich and variable among species, making it particularly suitable for these statistical analyses of trait association.
@@ -66,7 +66,7 @@ Some of the data needed to run these scripts is too large for GitHub and has bee
     - This is in contrast to the count of speciations, which again is a strong correlate of gene copy number.
         - Here, a positive association between speciation count and suppression of host detection would suggest that having a greater number of or diversity in these genes contributes to the capacity of species to suppress host detection.
 
-### Step 2: Use the [`02_clusters-orthogroups-analysis.R`](scripts/02_clusters-orthogroups-analysis.R) script to analyze clusters of orthogroups that are positively associated with suppression of host detection:
+#### Step 2: Use the [`02_clusters-orthogroups-analysis.R`](scripts/02_clusters-orthogroups-analysis.R) script to analyze clusters of orthogroups that are positively associated with suppression of host detection:
 
 We next sought to narrow down our pool of orthogroups to families of putative salivary effector proteins that could be direct mediators of the suppression of host detection. Gathering the different files together and filtering for these orthogroups is performed in the script `scripts/02_clusters-orthogroups-analysis.R`. First the identified clusters of orthogroups are combined with orthgroup information for what proteins are in that orthogroup and the annotations of those proteins. From combining this information, tables were created of both annotation descriptions for each protein and counts of orthogroups for each species. Then orthogroups were filtered based on:
 1. Selecting top 10% correlated clusters of orthogroups under the speciation model and are positively and significantly associated with suppression of host detection. Then within these clusters, removing any orthogroup that was individually negatively associated with suppression of host detection, and also any orthogroup with an initial p value > 0.05.
