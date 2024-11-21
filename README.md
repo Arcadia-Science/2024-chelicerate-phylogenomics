@@ -20,7 +20,11 @@ conda activate chelicerate
 ```
 
 Some packages/package versions were not available on conda, so we also provide an additional installation script.
-From the `chelicerate` conda environment, run:
+From the `chelicerate` conda environment, run this command to set the CRAN mirror:
+```{bash}
+echo ‘options(repos = c(CRAN = “https://cloud.r-project.org/”))’ >> ~/.Rprofile
+```
+Then run:
 ```{bash}
 Rscript scripts/install.R
 ```
@@ -40,7 +44,7 @@ You can check your working directory with the `getwd()` command and change it wi
 
 ## Data
 
-Some of the data needed to run these scripts is too large for GitHub and has been deposited on [Zenodo](10.5281/zenodo.14113178). This includes:
+Some of the data needed to run these scripts is too large for GitHub and has been deposited on [Zenodo](https://doi.org/10.5281/zenodo.14113178). This includes:
 - Outputs of the NovelTree run that are used as input into [01_phylo_profiling_genefam_evol_counts.R](scripts/01_phylo_profiling_genefam_evol_counts.R) and [02_clusters-orthogroups-analysis.R](scripts/02_clusters-orthogroups-analysis.R): `chelicerata-v1-10062023.zip`. After unzipping the folder, the R scripts will look for the files in folder `chelicerata-v1-10062023`. 
   - The file `Orthogroups.tsv` used by [02_clusters-orthogroups-analysis.R](scripts/02_clusters-orthogroups-analysis.R) is nested within this zip archive here: `chelicerata-v1-10062023/orthofinder/complete_dataset/Results_Inflation_1.5/Orthogroups/Orthogroups.tsv`
 - Chelicerate gene annotations used to do orthogroup filtering in [02_clusters-orthogroups-analysis.R](scripts/02_clusters-orthogroups-analysis.R): `annotated.zip` 
