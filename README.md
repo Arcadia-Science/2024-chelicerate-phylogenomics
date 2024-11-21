@@ -14,30 +14,6 @@ This repository uses conda to manage software environments and installations. Yo
 mamba env create -n chelicerate --file envs/dev.yml
 conda activate chelicerate
 ```
-The `phyr` package is not available through conda but is required by this repo. To install the package, run the following from within your activated environment to open R:
-
-```{bash}
-R
-```
-Once you are in an R session, run the following:
-
-```{bash}
-# Install remotes if not already installed
-if (!requireNamespace("remotes", quietly = TRUE)) {
-    install.packages("remotes")
-}
-
-# Set repositories
-options(repos = c(
-  phyr = 'https://daijiang.r-universe.dev',
-  CRAN = 'https://cloud.r-project.org'
-))
-
-# Install specific version of phyr
-remotes::install_version("phyr", version = "1.1.2", repos = "https://daijiang.r-universe.dev")
-```
-
-Quit the R session by running `quit()` and then enter `n` to not save the workspace.
 
 This repository contains R scripts which can be run in Rstudio, which can be installed following the instructions [here](https://posit.co/download/rstudio-desktop/). Once Rstudio is installed, run the following from command line to open Rstudio from your activated conda environment:
 
@@ -45,19 +21,20 @@ This repository contains R scripts which can be run in Rstudio, which can be ins
 open -a Rstudio
 ```
 
-You can now move on to running the necessary [scripts](scripts) as described below. Make sure your working directory is set to this repo when in Rstudio.
+You can now move on to running the necessary [scripts](scripts/) as described below. **Make sure your working directory is set to this repo when in Rstudio**.
 
 ## Data
 
 Some of the data needed to run these scripts is too large for GitHub and has been deposited on [Zenodo](10.5281/zenodo.14113178). This includes:
-- Outputs of the NovelTree run that are used as input into [phylo_profiling_genefam_evol_counts.R](scripts/phylo_profiling_genefam_evol_counts.R): chelicerata-v1-10062023.zip
-- Chelicerate gene annotations used to do orthogroup filtering in [clusters_orthogroups-analysis.R](scripts/clusters_orthogroups-analysis.R): annotated.zip 
-- Presence/absence of expression for each transcript in *A. americanum* salivary transcriptome used in [clusters_orthogroups-analysis.R](scripts/clusters_orthogroups-analysis.R): tx2gene.tsv
-- Chelicerate protein sequences used as input in [clusters_orthogroups-analysis.R](scripts/clusters_orthogroups-analysis.R) and needed for [deepTMHMM webserver](https://dtu.biolib.com/DeepTMHMM) prediction: 2024-06-24-all-chelicerate-noveltree-proteins.fasta
+- Outputs of the NovelTree run that are used as input into [01_phylo_profiling_genefam_evol_counts.R](scripts/01_phylo_profiling_genefam_evol_counts.R) and [02_clusters_orthogroups-analysis.R](scripts/02_clusters_orthogroups-analysis.R): chelicerata-v1-10062023.zip
+- Chelicerate gene annotations used to do orthogroup filtering in [02_clusters_orthogroups-analysis.R](scripts/02_clusters_orthogroups-analysis.R): annotated.zip 
+- Presence/absence of expression for each transcript in *A. americanum* salivary transcriptome used in [02_clusters_orthogroups-analysis.R](scripts/02_clusters_orthogroups-analysis.R): tx2gene.tsv
+- Chelicerate protein sequences used as input in [02_clusters_orthogroups-analysis.R](scripts/02_clusters_orthogroups-analysis.R) and needed for [deepTMHMM webserver](https://dtu.biolib.com/DeepTMHMM) prediction: 2024-06-24-all-chelicerate-noveltree-proteins.fasta
 
 ## Overview
+#### To run the analysis, you will need to run two Rscripts. The other [scripts](scripts/) contain functions that are called internally by these two main scripts.
 
-### The [`clusters_orthogroups-analysis.R`](scripts/clusters_orthogroups-analysis.R) script will perform the following:
+### Step 1: Use the [`01_phylo_profiling_genefam_evol_counts.R`](scripts/01_phylo_profiling_genefam_evol_counts.R) script to perform the following:
 
 1. Conduct phylogenetic profiling to identify groups (clusters) of gene families that have very similar patterns of gene duplication, transfer, and loss (gene family evolutionary events)
     - These results are contained within [`chelicerate-results/umap-layout-cluster-ids/*_profile_clusters_annotations.tsv`](chelicerate-results/umap-layout-cluster-ids/)
@@ -88,9 +65,9 @@ Some of the data needed to run these scripts is too large for GitHub and has bee
     - This is in contrast to the count of speciations, which again is a strong correlate of gene copy number.
         - Here, a positive association between speciation count and suppression of host detection would suggest that having a greater number of or diversity in these genes contributes to the capacity of species to suppress host detection.
 
-### Analysis of Clusters of Orthogroups Positively Associated with Suppression of Host Detection with [`scripts/clusters-orthogroups-analysis.R`](scripts/clusters-orthogroups-analysis.R)
+### Step 2: Use the [`02_clusters-orthogroups-analysis.R`](scripts/02_clusters-orthogroups-analysis.R) script to analyze clusters of orthogroups that are positively associated with suppression of host detection:
 
-We next sought to narrow down our pool of orthogroups to families of putative salivary effector proteins that could be direct mediators of the suppression of host detection. Gathering the different files together and filtering for these orthogroups is performed in the script `scripts/clusters-orthogroups-analysis.R`. First the identified clusters of orthogroups are combined with orthgroup information for what proteins are in that orthogroup and the annotations of those proteins. From combining this information, tables were created of both annotation descriptions for each protein and counts of orthogroups for each species. Then orthogroups were filtered based on:
+We next sought to narrow down our pool of orthogroups to families of putative salivary effector proteins that could be direct mediators of the suppression of host detection. Gathering the different files together and filtering for these orthogroups is performed in the script `scripts/02_clusters-orthogroups-analysis.R`. First the identified clusters of orthogroups are combined with orthgroup information for what proteins are in that orthogroup and the annotations of those proteins. From combining this information, tables were created of both annotation descriptions for each protein and counts of orthogroups for each species. Then orthogroups were filtered based on:
 1. Selecting top 10% correlated clusters of orthogroups under the speciation model and are positively and significantly associated with suppression of host detection. Then within these clusters, removing any orthogroup that was individually negatively associated with suppression of host detection, and also any orthogroup with an initial p value > 0.05.
 
     Orthogroups/proteins at this level of filtering included 76 orthogroups and 3414 proteins, which are described in [`chelicerate-results/clusters-orthogroups-analysis/top-positive-significant-clusters-orthogroups-annotations.tsv`](chelicerate-results/clusters-orthogroups-analysis/top-positive-significant-clusters-orthogroups-annotations.tsv).
