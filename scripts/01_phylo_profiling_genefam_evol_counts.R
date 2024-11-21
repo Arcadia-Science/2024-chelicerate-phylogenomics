@@ -5,7 +5,7 @@ source("./scripts/profile_cluster_trait_association_functions.R")
 
 # Pull in NovelTree outputs from the Chelicerata dataset
 result_directory <-
-  "~/Downloads/chelicerata-v1-10062023/" # available on Zenodo
+  "chelicerata-v1-10062023/" # available on Zenodo
 generax_dir <-
   paste0(result_directory, "generax/per_species_rates/")
 
