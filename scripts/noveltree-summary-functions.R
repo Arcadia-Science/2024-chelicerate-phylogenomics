@@ -1,16 +1,16 @@
 # This contains a series of functions used to summarize outputs produced from
 # running the NovelTree workflow
-require(tidyverse) # Version 2.0.0
-require(ggtree) # Version 3.6.2
-require(ggnewscale) # Version 0.4.8
-require(parallel) # Version 4.2.1
-require(reshape2) # Version 1.4.4
-require(cowplot) # Version 1.1.1
-require(phytools) # Version 1.5.1
-require(ape) # Version 5.7.1
-library(ggforce) # Version 0.4.1
-library(plotly) # Version 4.10.1
-library(cogeqc) # Version 1.2.1
+require(tidyverse)
+require(ggtree)
+require(ggnewscale)
+require(parallel)
+require(reshape2)
+require(cowplot)
+require(phytools)
+require(ape)
+library(ggforce)
+library(plotly)
+library(cogeqc)
 
 ####################################
 # Function to read busco results
