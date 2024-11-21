@@ -26,10 +26,11 @@ You can now move on to running the necessary [scripts](scripts/) as described be
 ## Data
 
 Some of the data needed to run these scripts is too large for GitHub and has been deposited on [Zenodo](10.5281/zenodo.14113178). This includes:
-- Outputs of the NovelTree run that are used as input into [01_phylo_profiling_genefam_evol_counts.R](scripts/01_phylo_profiling_genefam_evol_counts.R) and [02_clusters_orthogroups-analysis.R](scripts/02_clusters_orthogroups-analysis.R): chelicerata-v1-10062023.zip
-- Chelicerate gene annotations used to do orthogroup filtering in [02_clusters_orthogroups-analysis.R](scripts/02_clusters_orthogroups-analysis.R): annotated.zip 
-- Presence/absence of expression for each transcript in *A. americanum* salivary transcriptome used in [02_clusters_orthogroups-analysis.R](scripts/02_clusters_orthogroups-analysis.R): tx2gene.tsv
-- Chelicerate protein sequences used as input in [02_clusters_orthogroups-analysis.R](scripts/02_clusters_orthogroups-analysis.R) and needed for [deepTMHMM webserver](https://dtu.biolib.com/DeepTMHMM) prediction: 2024-06-24-all-chelicerate-noveltree-proteins.fasta
+- Outputs of the NovelTree run that are used as input into [01_phylo_profiling_genefam_evol_counts.R](scripts/01_phylo_profiling_genefam_evol_counts.R) and [02_clusters_orthogroups-analysis.R](scripts/02_clusters_orthogroups-analysis.R): `chelicerata-v1-10062023.zip`
+  - The file `Orthogroups.tsv` used by [02_clusters_orthogroups-analysis.R](scripts/02_clusters_orthogroups-analysis.R) is nested within this zip archive here: `chelicerata-v1-10062023/orthofinder/complete_dataset/Results_Inflation_1.5/Orthogroups/Orthogroups.tsv`
+- Chelicerate gene annotations used to do orthogroup filtering in [02_clusters_orthogroups-analysis.R](scripts/02_clusters_orthogroups-analysis.R): `annotated.zip` 
+- Presence/absence of expression for each transcript in *A. americanum* salivary transcriptome used in [02_clusters_orthogroups-analysis.R](scripts/02_clusters_orthogroups-analysis.R): `tx2gene.tsv`
+- Chelicerate protein sequences used as input in [02_clusters_orthogroups-analysis.R](scripts/02_clusters_orthogroups-analysis.R) and needed for [deepTMHMM webserver](https://dtu.biolib.com/DeepTMHMM) prediction: `2024-06-24-all-chelicerate-noveltree-proteins.fasta`
 
 ## Overview
 #### To run the analysis, you will need to run two Rscripts. The other [scripts](scripts/) contain functions that are called internally by these two main scripts.
@@ -54,7 +55,7 @@ Some of the data needed to run these scripts is too large for GitHub and has bee
     - Regardless, for now it's best to focus on the `leiden_cluster_id`, since these are the clusters the statistical tests were conducted on.
 
 #### A few quick notes on interpretation:
-1. "Speciations" in the context of gene family evolution captures multiple features of gene family evolution and is closely ties to gene copy number - it thus is a correlate of the other event types - gene duplication, transfer, and loss.
+1. "Speciations" in the context of gene family evolution captures multiple features of gene family evolution and is closely tied to gene copy number - it thus is a correlate of the other event types - gene duplication, transfer, and loss.
     - For instance, increasing gene duplication increases the observed number of speciation events, whereas elevated rates of gene loss will decrease the number of speciation events.
     - For these reasons, it is very information rich and variable among species, making it particularly suitable for these statistical analyses of trait association.
     - Thus, if you were to choose one event type to focus on, it's recommended you focus on speciations.
