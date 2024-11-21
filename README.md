@@ -17,21 +17,32 @@ mamba env create -n chelicerate --file envs/dev.yml
 conda activate chelicerate
 ```
 
-This repository contains R scripts which can be run in Rstudio, which can be installed following the instructions [here](https://posit.co/download/rstudio-desktop/). Once Rstudio is installed, run the following from command line to open Rstudio from your activated conda environment:
+Some packages/package versions were not available on conda, so we also provide an additional installation script.
+From the `chelicerate` conda environment, run:
+```{bash}
+Rscript scripts/install.R
+```
+
+This repository contains R scripts.
+These can either be run directly in the terminal as R scripts or in the terminal R environment, or can be run in RStudio.
+If you choose to run these scripts in Rstudio, you can install it by following the instructions [here](https://posit.co/download/rstudio-desktop/).
+Once RStudio is installed, run the following from command line to open Rstudio from your activated conda environment:
 
 ```{bash}
 open -a Rstudio
 ```
 
-You can now move on to running the necessary [scripts](scripts/) as described below. **Make sure your working directory is set to this repo when in Rstudio**.
+You can now move on to running the necessary [scripts](scripts/) as described below.
+**Make sure your working directory is set to this repo when in Rstudio**.
+You can check your working directory with the `getwd()` command and change it with the `setwd()` command in R.
 
 ## Data
 
 Some of the data needed to run these scripts is too large for GitHub and has been deposited on [Zenodo](10.5281/zenodo.14113178). This includes:
-- Outputs of the NovelTree run that are used as input into [01_phylo_profiling_genefam_evol_counts.R](scripts/01_phylo_profiling_genefam_evol_counts.R) and [02_clusters-orthogroups-analysis.R](scripts/02_clusters-orthogroups-analysis.R): `chelicerata-v1-10062023.zip`
+- Outputs of the NovelTree run that are used as input into [01_phylo_profiling_genefam_evol_counts.R](scripts/01_phylo_profiling_genefam_evol_counts.R) and [02_clusters-orthogroups-analysis.R](scripts/02_clusters-orthogroups-analysis.R): `chelicerata-v1-10062023.zip`. After unzipping the folder, the R scripts will look for the files in folder `chelicerata-v1-10062023`. 
   - The file `Orthogroups.tsv` used by [02_clusters-orthogroups-analysis.R](scripts/02_clusters-orthogroups-analysis.R) is nested within this zip archive here: `chelicerata-v1-10062023/orthofinder/complete_dataset/Results_Inflation_1.5/Orthogroups/Orthogroups.tsv`
 - Chelicerate gene annotations used to do orthogroup filtering in [02_clusters-orthogroups-analysis.R](scripts/02_clusters-orthogroups-analysis.R): `annotated.zip` 
-- Presence/absence of expression for each transcript in *A. americanum* salivary transcriptome used in [02_clusters-orthogroups-analysis.R](scripts/02_clusters-orthogroups-analysis.R): `tx2gene.tsv`
+- Presence/absence of expression for each transcript in *A. americanum* salivary transcriptome used in [02_clusters-orthogroups-analysis.R](scripts/02_clusters-orthogroups-analysis.R): `tx2gene.tsv`. This file needs to be saved at the path `chelicerate-results/clusters-orthogroups-analysis/tx2gene.tsv` in this repository.
 - Chelicerate protein sequences used as input in [02_clusters-orthogroups-analysis.R](scripts/02_clusters-orthogroups-analysis.R) and needed for [deepTMHMM webserver](https://dtu.biolib.com/DeepTMHMM) prediction: `2024-06-24-all-chelicerate-noveltree-proteins.fasta`
 
 ## Overview
