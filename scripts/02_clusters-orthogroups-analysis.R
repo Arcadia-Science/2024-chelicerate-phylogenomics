@@ -135,7 +135,7 @@ speciation_select_clusters <- all_profiles_df %>%
 speciation_select_clusters %>%
   select(orthogroup) %>%
   unique() %>%
-  count() # 718 orthogroups from the top 10% clusters that are positively
+  count() # 832 orthogroups from the top 10% clusters that are positively
 # predictive for host detection suppression under the speciation model
 
 # Filter for significant clusters, which meets pval < 0.05
@@ -145,7 +145,7 @@ signf_speciation_select_clusters <- speciation_select_clusters %>%
 signf_speciation_select_clusters %>%
   select(orthogroup) %>%
   unique() %>%
-  count() # 76 orthogroups that are significantly, positively associated with
+  count() # 86 orthogroups that are significantly, positively associated with
 # host detection suppression
 
 # combine clusters/orthogroups with orthogroups/locus tags
@@ -153,7 +153,7 @@ signf_clusters_orthogroups_annotations <-
   left_join(signf_speciation_select_clusters,
     orthogroup_annotations,
     relationship = "many-to-many"
-  ) # 3414 proteins
+  ) # 3461 proteins
 
 # counts of genes across species
 signf_clusters_orthogroups_counts <-
@@ -230,7 +230,7 @@ majority_secreted_orthogroups <-
 
 majority_secreted_orthogroups_list <-
   majority_secreted_orthogroups %>%
-  pull(orthogroup) # 14 orthogroups after secretion filter
+  pull(orthogroup) # 15 orthogroups after secretion filter
 
 # Expressed amblyomma proteins in orthogroups
 # Per orthogroup, get number of Amblyomma genes in that orthogroup
@@ -305,7 +305,7 @@ filtered_orthogroups_by_secretion_expression <-
 
 filtered_orthogroups_list <-
   filtered_orthogroups_by_secretion_expression %>%
-  pull(orthogroup) # 12 orthogroups left
+  pull(orthogroup) # 13 orthogroups left
 
 # filter the annotations and counts tables to this filtered set of orthogroups
 filtered_annotations <- signf_clusters_orthogroups_annotations %>%
@@ -428,7 +428,7 @@ write.table(
 # The FASTA file 2024-06-24-all-chelicerate-noveltree-proteins.fasta is
 # available on Zenodo.
 # 2. Transmembrane domain predictions from deepTMHMM tool with
-# chelicerate-results/deeptmhmm-results/2024-06-26-filtered-proteins-for-tm-prediction.fasta
+# chelicerate-results/deeptmhmm-results/filtered-proteins-for-tm-prediction.fasta
 # on this webserver https://dtu.biolib.com/DeepTMHMM
 # 3. Downloaded results from webserver and used this command to make table:
 # awk -F'\\| ' '/^>/{gsub(/^>/, "", $1); print $1 "\t" $2}' \
