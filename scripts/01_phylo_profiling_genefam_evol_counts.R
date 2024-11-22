@@ -396,6 +396,30 @@ suppressors <-
 nonsuppressors <-
   metadat$id[which(metadat$host_detection_suppression == "No")]
 
+### Remove clusters with small samples sizes (<25 OGs), which led to noisy parameter estimates, possibly due to a greater sensitivity to model initialization conditions and low statistical power
+s_cluster_counts <- table(s_dists_clusts$umap_clusters$leiden_cluster_id)
+t_cluster_counts <- table(t_dists_clusts$umap_clusters$leiden_cluster_id)
+sl_cluster_counts <- table(sl_dists_clusts$umap_clusters$leiden_cluster_id)
+all_cluster_counts <- table(all_dists_clusts$umap_clusters$leiden_cluster_id)
+
+s_valid_clusters <- names(s_cluster_counts[s_cluster_counts >= 25])
+t_valid_clusters <- names(t_cluster_counts[t_cluster_counts >= 25])
+sl_valid_clusters <- names(sl_cluster_counts[sl_cluster_counts >= 25])
+all_valid_clusters <- names(all_cluster_counts[all_cluster_counts >= 25])
+
+s_dists_clusts$umap_clusters <- s_dists_clusts$umap_clusters[
+  s_dists_clusts$umap_clusters$leiden_cluster_id %in% s_valid_clusters, 
+]
+t_dists_clusts$umap_clusters <- t_dists_clusts$umap_clusters[
+  t_dists_clusts$umap_clusters$leiden_cluster_id %in% t_valid_clusters, 
+]
+sl_dists_clusts$umap_clusters <- sl_dists_clusts$umap_clusters[
+  sl_dists_clusts$umap_clusters$leiden_cluster_id %in% sl_valid_clusters, 
+]
+all_dists_clusts$umap_clusters <- all_dists_clusts$umap_clusters[
+  all_dists_clusts$umap_clusters$leiden_cluster_id %in% all_valid_clusters, 
+]
+
 # Conduct the tests, for each gene family and each event type of whether event
 # counts differ between detection-suppressing species
 # NOTE: We cannot use duplications here, as they are not inferred to have
