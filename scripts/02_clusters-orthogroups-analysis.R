@@ -434,8 +434,8 @@ write.table(
 # awk -F'\\| ' '/^>/{gsub(/^>/, "", $1); print $1 "\t" $2}' \
 # chelicerate-results/deeptmhmm-results/predicted_topologies.3line > \
 # chelicerate-results/deeptmhmm-results/tmpredictions.txt
-# 4. We only had proteins left that had just a SP prediction, no TM or TM+SP,
-# but the code below would remove them if needed.
+# 4. We had 3 proteins with TM+SP prediction,
+# used code below to remove corresponding OG. Results in 10 OGs remaining.
 ######################################
 
 # select proteins in orthogroups with SP predictions, toss out SP+TM or just TM
@@ -476,10 +476,6 @@ filtered_tick_SP_proteins_counts <- filtered_orthogroup_tmpreds %>%
   pivot_wider(names_from = "species", values_from = "n") %>%
   mutate(across(where(is.numeric), ~ coalesce(., 0)))
 
-filtered_annotations_tm_predictions %>%
-  group_by(orthogroup) %>%
-  select(orthogroup, locus_tag) %>%
-  count() # 10 orthogroups with 275 proteins to select candidates from
 
 # Merge expression data into filtered_orthogroup_tmpreds for use in candidate
 # selection.
