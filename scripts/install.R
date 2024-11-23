@@ -81,6 +81,6 @@ install_bioc_packages <- function(packages) {
 # Install packages
 # Bioconductor packages need to be installed first as BioManager will twiddle
 # with the versions of other packages
-# BiocManager::install(version = "3.19", ask=FALSE)
+BiocManager::install(version = "3.19", ask=FALSE)
 install_bioc_packages(bioc_packages)
 install_cran_packages(cran_packages)
