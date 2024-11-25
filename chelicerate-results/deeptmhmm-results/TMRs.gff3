@@ -19,10 +19,20 @@ Amblyomma-americanum_evm.model.contig-85352-1.4	outside	22	189
 Amblyomma-americanum_evm.model.contig-85352-1.5	signal	1	19				
 Amblyomma-americanum_evm.model.contig-85352-1.5	outside	20	199				
 //
+# Amblyomma-americanum_evm.model.contig-30784-1.2 Length: 486
+# Amblyomma-americanum_evm.model.contig-30784-1.2 Number of predicted TMRs: 0
+Amblyomma-americanum_evm.model.contig-30784-1.2	signal	1	26				
+Amblyomma-americanum_evm.model.contig-30784-1.2	outside	27	486				
+//
 # Amblyomma-americanum_evm.model.contig-11987-1.3 Length: 563
 # Amblyomma-americanum_evm.model.contig-11987-1.3 Number of predicted TMRs: 0
 Amblyomma-americanum_evm.model.contig-11987-1.3	signal	1	15				
 Amblyomma-americanum_evm.model.contig-11987-1.3	outside	16	563				
+//
+# Amblyomma-americanum_evm.model.contig-122814-1.1 Length: 88
+# Amblyomma-americanum_evm.model.contig-122814-1.1 Number of predicted TMRs: 0
+Amblyomma-americanum_evm.model.contig-122814-1.1	signal	1	23				
+Amblyomma-americanum_evm.model.contig-122814-1.1	outside	24	88				
 //
 # Amblyomma-americanum_evm.model.contig-248966-1.1 Length: 216
 # Amblyomma-americanum_evm.model.contig-248966-1.1 Number of predicted TMRs: 0
@@ -694,6 +704,21 @@ Dinothrombium-tinctorium_tr|A0A443QXN7|A0A443QXN7-9ACAR	outside	25	174
 Galendromus-occidentalis_XP-018496565.1	signal	1	18				
 Galendromus-occidentalis_XP-018496565.1	outside	19	391				
 //
+# Haemaphysalis-longicornis_KAH9360716.1 Length: 332
+# Haemaphysalis-longicornis_KAH9360716.1 Number of predicted TMRs: 5
+Haemaphysalis-longicornis_KAH9360716.1	signal	1	28				
+Haemaphysalis-longicornis_KAH9360716.1	outside	29	71				
+Haemaphysalis-longicornis_KAH9360716.1	TMhelix	72	81				
+Haemaphysalis-longicornis_KAH9360716.1	inside	82	97				
+Haemaphysalis-longicornis_KAH9360716.1	TMhelix	98	111				
+Haemaphysalis-longicornis_KAH9360716.1	outside	112	128				
+Haemaphysalis-longicornis_KAH9360716.1	TMhelix	129	149				
+Haemaphysalis-longicornis_KAH9360716.1	inside	150	255				
+Haemaphysalis-longicornis_KAH9360716.1	TMhelix	256	276				
+Haemaphysalis-longicornis_KAH9360716.1	outside	277	298				
+Haemaphysalis-longicornis_KAH9360716.1	TMhelix	299	308				
+Haemaphysalis-longicornis_KAH9360716.1	inside	309	332				
+//
 # Haemaphysalis-longicornis_KAH9363918.1 Length: 150
 # Haemaphysalis-longicornis_KAH9363918.1 Number of predicted TMRs: 0
 Haemaphysalis-longicornis_KAH9363918.1	signal	1	21				
@@ -794,10 +819,31 @@ Hyalomma-asiaticum_KAH6944281.1	outside	16	523
 Hyalomma-asiaticum_KAH6947072.1	signal	1	20				
 Hyalomma-asiaticum_KAH6947072.1	outside	21	193				
 //
+# Ixodes-persulcatus_KAG0419286.1 Length: 165
+# Ixodes-persulcatus_KAG0419286.1 Number of predicted TMRs: 2
+Ixodes-persulcatus_KAG0419286.1	signal	1	26				
+Ixodes-persulcatus_KAG0419286.1	outside	27	87				
+Ixodes-persulcatus_KAG0419286.1	TMhelix	88	97				
+Ixodes-persulcatus_KAG0419286.1	inside	98	134				
+Ixodes-persulcatus_KAG0419286.1	TMhelix	135	152				
+Ixodes-persulcatus_KAG0419286.1	outside	153	165				
+//
 # Ixodes-persulcatus_KAG0424607.1 Length: 153
 # Ixodes-persulcatus_KAG0424607.1 Number of predicted TMRs: 0
 Ixodes-persulcatus_KAG0424607.1	signal	1	21				
 Ixodes-persulcatus_KAG0424607.1	outside	22	153				
+//
+# Ixodes-persulcatus_KAG0429368.1 Length: 141
+# Ixodes-persulcatus_KAG0429368.1 Number of predicted TMRs: 0
+Ixodes-persulcatus_KAG0429368.1	signal	1	25				
+Ixodes-persulcatus_KAG0429368.1	outside	26	141				
+//
+# Ixodes-persulcatus_KAG0429373.1 Length: 401
+# Ixodes-persulcatus_KAG0429373.1 Number of predicted TMRs: 1
+Ixodes-persulcatus_KAG0429373.1	signal	1	19				
+Ixodes-persulcatus_KAG0429373.1	outside	20	172				
+Ixodes-persulcatus_KAG0429373.1	TMhelix	173	182				
+Ixodes-persulcatus_KAG0429373.1	inside	183	401				
 //
 # Ixodes-persulcatus_KAG0430904.1 Length: 333
 # Ixodes-persulcatus_KAG0430904.1 Number of predicted TMRs: 0
@@ -844,6 +890,11 @@ Ixodes-scapularis_tr|B7PPN2|B7PPN2-IXOSC	outside	23	75
 Ixodes-scapularis_tr|B7QIW0|B7QIW0-IXOSC	signal	1	19				
 Ixodes-scapularis_tr|B7QIW0|B7QIW0-IXOSC	outside	20	71				
 //
+# Ixodes-scapularis_tr|B7QMG5|B7QMG5-IXOSC Length: 106
+# Ixodes-scapularis_tr|B7QMG5|B7QMG5-IXOSC Number of predicted TMRs: 0
+Ixodes-scapularis_tr|B7QMG5|B7QMG5-IXOSC	signal	1	25				
+Ixodes-scapularis_tr|B7QMG5|B7QMG5-IXOSC	outside	26	106				
+//
 # Ixodes-scapularis_tr|B7P5F3|B7P5F3-IXOSC Length: 155
 # Ixodes-scapularis_tr|B7P5F3|B7P5F3-IXOSC Number of predicted TMRs: 0
 Ixodes-scapularis_tr|B7P5F3|B7P5F3-IXOSC	signal	1	21				
@@ -853,6 +904,16 @@ Ixodes-scapularis_tr|B7P5F3|B7P5F3-IXOSC	outside	22	155
 # Ixodes-scapularis_tr|Q5ISE3|Q5ISE3-IXOSC Number of predicted TMRs: 0
 Ixodes-scapularis_tr|Q5ISE3|Q5ISE3-IXOSC	signal	1	22				
 Ixodes-scapularis_tr|Q5ISE3|Q5ISE3-IXOSC	outside	23	74				
+//
+# Ixodes-scapularis_tr|B7PU83|B7PU83-IXOSC Length: 97
+# Ixodes-scapularis_tr|B7PU83|B7PU83-IXOSC Number of predicted TMRs: 0
+Ixodes-scapularis_tr|B7PU83|B7PU83-IXOSC	signal	1	19				
+Ixodes-scapularis_tr|B7PU83|B7PU83-IXOSC	outside	20	97				
+//
+# Ixodes-scapularis_tr|B7P8J1|B7P8J1-IXOSC Length: 167
+# Ixodes-scapularis_tr|B7P8J1|B7P8J1-IXOSC Number of predicted TMRs: 0
+Ixodes-scapularis_tr|B7P8J1|B7P8J1-IXOSC	signal	1	20				
+Ixodes-scapularis_tr|B7P8J1|B7P8J1-IXOSC	outside	21	167				
 //
 # Ixodes-scapularis_tr|B7P452|B7P452-IXOSC Length: 76
 # Ixodes-scapularis_tr|B7P452|B7P452-IXOSC Number of predicted TMRs: 0
@@ -1348,6 +1409,11 @@ Siro-boyerae_comp26174-c0-seq1.p1	outside	19	123
 # Tetranychus-urticae_tr|T1KHI0|T1KHI0-TETUR Number of predicted TMRs: 0
 Tetranychus-urticae_tr|T1KHI0|T1KHI0-TETUR	signal	1	21				
 Tetranychus-urticae_tr|T1KHI0|T1KHI0-TETUR	outside	22	170				
+//
+# Tropilaelaps-mercedesae_tr|A0A1V9Y0T1|A0A1V9Y0T1-9ACAR Length: 77
+# Tropilaelaps-mercedesae_tr|A0A1V9Y0T1|A0A1V9Y0T1-9ACAR Number of predicted TMRs: 0
+Tropilaelaps-mercedesae_tr|A0A1V9Y0T1|A0A1V9Y0T1-9ACAR	signal	1	18				
+Tropilaelaps-mercedesae_tr|A0A1V9Y0T1|A0A1V9Y0T1-9ACAR	outside	19	77				
 //
 # Tropilaelaps-mercedesae_tr|A0A1V9XT26|A0A1V9XT26-9ACAR Length: 348
 # Tropilaelaps-mercedesae_tr|A0A1V9XT26|A0A1V9XT26-9ACAR Number of predicted TMRs: 0

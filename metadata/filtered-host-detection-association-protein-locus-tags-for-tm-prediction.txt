@@ -154,6 +154,16 @@ Rhipicephalus-microplus_XP-037280160.1
 Rhipicephalus-microplus_XP-037280165.1
 Rhipicephalus-microplus_XP-037280173.1
 Rhipicephalus-sanguineus_XP-049270642.1
+Amblyomma-americanum_evm.model.contig-122814-1.1
+Amblyomma-americanum_evm.model.contig-30784-1.2
+Haemaphysalis-longicornis_KAH9360716.1
+Ixodes-persulcatus_KAG0419286.1
+Ixodes-persulcatus_KAG0429368.1
+Ixodes-persulcatus_KAG0429373.1
+Ixodes-scapularis_tr|B7P8J1|B7P8J1-IXOSC
+Ixodes-scapularis_tr|B7PU83|B7PU83-IXOSC
+Ixodes-scapularis_tr|B7QMG5|B7QMG5-IXOSC
+Tropilaelaps-mercedesae_tr|A0A1V9Y0T1|A0A1V9Y0T1-9ACAR
 Amblyomma-americanum_evm.model.contig-160846-1.2
 Amblyomma-americanum_evm.model.contig-248966-1.1
 Amblyomma-sculptum_GEEX01013646.1.p1
