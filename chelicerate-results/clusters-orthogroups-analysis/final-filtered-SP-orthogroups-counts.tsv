@@ -1,0 +1,11 @@
+orthogroup	Amblyomma-americanum	Amblyomma-sculptum	Dermacentor-andersoni	Dermacentor-silvarum	Dermacentor-variabilis	Dermanyssus-gallinae	Dermatophagoides-farinae	Dinothrombium-tinctorium	Galendromus-occidentalis	Haemaphysalis-longicornis	Hyalomma-asiaticum	Ixodes-persulcatus	Ixodes-ricinus	Ixodes-scapularis	Limulus-polyphemus	Oppiella-nova	Ornithodoros-erraticus	Ornithodoros-turicata	Rhipicephalus-microplus	Rhipicephalus-sanguineus	Ricinoides-atewa	Siro-boyerae	Tetranychus-urticae	Tropilaelaps-mercedesae	Tyrophagus-putrescentiae	Varroa-destructor	Varroa-jacobsoni
+OG0000747	2	1	15	13	0	0	0	0	0	0	8	0	0	0	0	0	0	0	8	13	0	0	0	0	0	0	0
+OG0000880	4	3	11	10	2	0	0	0	0	0	4	0	1	0	0	0	0	0	10	8	0	0	0	0	0	0	0
+OG0001774	1	2	6	7	0	2	1	0	0	0	0	0	0	8	0	2	0	0	2	7	0	0	0	0	1	0	0
+OG0001970	1	1	2	2	0	1	0	1	1	2	1	1	0	2	3	0	1	2	4	3	1	1	1	1	0	1	2
+OG0005278	1	1	7	9	2	0	0	0	0	0	1	1	1	0	0	0	0	0	5	5	0	0	0	0	0	0	0
+OG0007516	1	1	3	4	1	0	0	0	0	0	2	0	0	0	0	0	0	0	1	2	0	0	0	0	0	0	0
+OG0009905	1	0	2	1	1	0	0	0	0	0	0	0	0	0	0	0	0	0	1	2	0	0	0	0	0	0	0
+OG0008849	0	1	2	2	0	0	0	0	0	0	1	0	0	0	0	0	0	0	2	1	0	0	0	0	0	0	0
+OG0009626	0	1	1	0	0	0	0	0	0	0	1	0	2	0	0	0	0	0	1	1	0	0	0	0	0	0	0
+OG0007774	0	0	2	6	0	0	0	0	0	0	0	0	0	1	0	0	0	0	6	1	0	0	0	0	0	0	0
