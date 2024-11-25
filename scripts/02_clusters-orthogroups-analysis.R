@@ -145,7 +145,7 @@ signf_speciation_select_clusters <- speciation_select_clusters %>%
 signf_speciation_select_clusters %>%
   select(orthogroup) %>%
   unique() %>%
-  count() # 86 orthogroups that are significantly, positively associated with
+  count() # 87 orthogroups that are significantly, positively associated with
 # host detection suppression
 
 # combine clusters/orthogroups with orthogroups/locus tags
@@ -153,7 +153,7 @@ signf_clusters_orthogroups_annotations <-
   left_join(signf_speciation_select_clusters,
     orthogroup_annotations,
     relationship = "many-to-many"
-  ) # 3461 proteins
+  ) # 3690 proteins
 
 # counts of genes across species
 signf_clusters_orthogroups_counts <-
